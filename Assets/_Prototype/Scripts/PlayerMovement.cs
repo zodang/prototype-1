@@ -1,61 +1,52 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private PlayerAbsorption absorption;
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private InputManager inputManager;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private float moveSpeed = 3f;
+    
+    public Vector2 direction;
+    public float angle;
 
     private Vector2 _moveInput;
-    private Vector2 _lookDirection = Vector2.right;
-
-    public void OnMove(InputValue value)
+    private Vector2 _lookInput;
+    private void OnEnable()
     {
-        _moveInput = value.Get<Vector2>();
+        inputManager.OnMoveEvent += HandleMove;
+        inputManager.OnLookEvent += HandleLook;
+    }
+    
+    private void OnDisable()
+    {
+        inputManager.OnMoveEvent -= HandleMove;
+        inputManager.OnLookEvent -= HandleLook;
+    }
+
+    private void Start()
+    {
+        spriteRenderer =  GetComponent<SpriteRenderer>();
     }
 
     private void Update()
     {
-        Move();
-        UpdateLookDirectionByMouse();
-        RotateToLookDirection();
+        transform.position += (Vector3)(_moveInput * (moveSpeed * Time.deltaTime));
+        
+        Vector2 worldPos = Camera.main.ScreenToWorldPoint(_lookInput);
+        direction = (worldPos - (Vector2)transform.position).normalized;
+        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        
+        if (direction.x > 0) spriteRenderer.flipX = false;
+        if (direction.x < 0) spriteRenderer.flipX = true;
     }
 
-    private void Move()
+    private void HandleMove(Vector2 value)
     {
-        transform.position += (Vector3)(_moveInput * moveSpeed * Time.deltaTime);
+        _moveInput = value;
     }
 
-    private void UpdateLookDirectionByMouse()
+    private void HandleLook(Vector2 value)
     {
-        Vector3 mouseScreenPos = Mouse.current.position.ReadValue();
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
-
-        Vector2 dir = mouseWorldPos - transform.position;
-
-        // z값 제거 (2D니까)
-        dir.Normalize();
-
-        if (dir.sqrMagnitude > 0.001f)
-        {
-            _lookDirection = dir;
-            absorption.SetLookDirection(_lookDirection);
-        }
-    }
-
-    private void RotateToLookDirection()
-    {
-        float angle = Mathf.Atan2(_lookDirection.y, _lookDirection.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-
-        Vector3 start = transform.position;
-        Vector3 direction = new Vector3(_lookDirection.x, _lookDirection.y, 0f);
-
-        Gizmos.DrawLine(start, start + direction * 2f);
+        _lookInput = value;
     }
 }
