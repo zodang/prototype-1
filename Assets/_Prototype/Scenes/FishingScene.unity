@@ -149,8 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f0add1dabcdc394d8e02509aca11ce1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputManager
-  MoveInput: {x: 0, y: 0}
-  LookInput: {x: 0, y: 0}
   JumpInput: 0
 --- !u!114 &240833238
 MonoBehaviour:
@@ -226,6 +224,7 @@ GameObject:
   - component: {fileID: 1398753567}
   - component: {fileID: 1398753571}
   - component: {fileID: 1398753570}
+  - component: {fileID: 1398753573}
   m_Layer: 0
   m_Name: Buddie
   m_TagString: Untagged
@@ -319,10 +318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimation
   inputManager: {fileID: 240833237}
-  spriteRenderer: {fileID: 0}
   moveSpeed: 3
-  direction: {x: 0, y: 0}
-  angle: 0
 --- !u!212 &1398753572
 SpriteRenderer:
   serializedVersion: 2
@@ -382,6 +378,19 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1398753573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398753564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4908be4614cbbc1468e030158fdf54a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimation
+  inputManager: {fileID: 240833237}
 --- !u!1 &1406903556
 GameObject:
   m_ObjectHideFlags: 0
