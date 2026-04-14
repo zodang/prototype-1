@@ -12,7 +12,8 @@ public class PlayerAnimation : MonoBehaviour
     private Vector2 _direction;
     private float _angle;
     
-    private static readonly int IsRunning = Animator.StringToHash("b_running");
+    private static readonly int IsRunning = Animator.StringToHash("b_run");
+    private static readonly int IsAttacking = Animator.StringToHash("b_attack");
     
     private void OnEnable()
     {
@@ -20,6 +21,9 @@ public class PlayerAnimation : MonoBehaviour
         inputManager.OnMoveEndEvent += HandleMoveEnded;
         
         inputManager.OnLookEvent += HandleLook;
+        
+        inputManager.OnAttackStartedEvent += HandleAttackStarted;
+        inputManager.OnAttackEndedEvent += HandleAttackEnded;
     }
     
     private void OnDisable()
@@ -60,6 +64,16 @@ public class PlayerAnimation : MonoBehaviour
     private void HandleLook(Vector2 value)
     {
         _lookInput = value;
+    }
+
+    private void HandleAttackStarted()
+    {
+        _animator.SetBool(IsAttacking, true);
+    }
+
+    private void HandleAttackEnded()
+    {
+        _animator.SetBool(IsAttacking, false);
     }
     
 }
