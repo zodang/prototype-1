@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (!inputManager.IsMoving) return;
+        if (!inputManager.IsTryingToMove) return;
         transform.position += (Vector3)(_moveInput * (moveSpeed * Time.deltaTime));
     }
 

@@ -11,15 +11,19 @@ public class InputManager : MonoBehaviour
     public event Action OnMoveStartEvent;
     public event Action<Vector2> OnMoveEvent;
     public event Action OnMoveEndEvent;
+    
     public event Action<Vector2> OnLookEvent;
     public event Action OnJumpEvent;
-    public event Action OnAttackEvent;
+    public event Action OnAttackStartedEvent;
+    public event Action OnAttackPerformedEvent;
+    public event Action OnAttackEndedEvent;
     
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
     public float JumpInput;
 
-    public bool IsMoving { get; private set; }
+    public bool IsTryingToMove { get; private set; }
+    public bool IsTryingToAttack { get; private set; }
 
     private void Awake()
     {
@@ -33,22 +37,32 @@ public class InputManager : MonoBehaviour
         _playerActions.Move.started += OnMoveStarted;
         _playerActions.Move.performed += OnMovePerformed;
         _playerActions.Move.canceled += OnMoveCanceled;
+        
         _playerActions.Look.performed += OnLookPerformed;
         _playerActions.Jump.performed += OnJumpPerformed;
+
+        _playerActions.Attack.started += OnAttackStarted;
+        _playerActions.Attack.performed += OnAttackPerformed;
+        _playerActions.Attack.canceled += OnAttackEnded;
     }
     
     private void OnDisable()
     {
+        _playerActions.Move.started -= OnMoveStarted;
         _playerActions.Move.performed -= OnMovePerformed;
         _playerActions.Move.canceled -= OnMoveCanceled;
+        
         _playerActions.Look.performed -= OnLookPerformed;
         _playerActions.Jump.performed -= OnJumpPerformed;
+        
+        _playerActions.Attack.started -= OnAttackStarted;
+        _playerActions.Attack.canceled -= OnAttackEnded;
     }
     
     private void OnMoveStarted(InputAction.CallbackContext context)
     {
         MoveInput = context.ReadValue<Vector2>();
-        IsMoving = true;
+        IsTryingToMove = true;
         OnMoveStartEvent?.Invoke();
     }
 
@@ -61,7 +75,7 @@ public class InputManager : MonoBehaviour
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
         MoveInput = Vector2.zero;
-        IsMoving = false;
+        IsTryingToMove = false;
         OnMoveEndEvent?.Invoke();
     }
 
@@ -77,15 +91,20 @@ public class InputManager : MonoBehaviour
         OnJumpEvent?.Invoke();
     }
     
-    public void OnAttack(InputAction.CallbackContext context)
+    private void OnAttackStarted(InputAction.CallbackContext context)
     {
-        if (context.performed)
-        {
-            Debug.Log("Attack");
-        }
-        else if (context.canceled)
-        {
-            Debug.Log("CANCEL Attack");
-        }
+        IsTryingToAttack = true;
+        OnAttackStartedEvent?.Invoke();
+    }
+
+    private void OnAttackPerformed(InputAction.CallbackContext context)
+    {
+        OnAttackPerformedEvent?.Invoke();
+    }
+    
+    private void OnAttackEnded(InputAction.CallbackContext context)
+    {
+        IsTryingToAttack = false;
+        OnAttackEndedEvent?.Invoke();
     }
 }
