@@ -5,92 +5,130 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour
 {
     [SerializeField] private InputManager inputManager;
+    private LineRenderer _lineRenderer;
 
     public int attackRadius = 2;
     public float attackDamage = 1;
+    public float attackInterval = 1.0f;
 
     private BoxCollider2D[] detecedEnemy = new BoxCollider2D[6];
 
     public int maxChainCount = 3;
-    private List<Enemy> chain = new List<Enemy>();
+    public List<Enemy> chain = new List<Enemy>();
 
     private Coroutine attackCoroutine;
 
+    private Enemy _current;
+    private Enemy _prev;
+
+    private void Start()
+    {
+        _lineRenderer = GetComponent<LineRenderer>();
+        _lineRenderer.positionCount = 0;
+    }
+
     private void Update()
     {
-        if (!inputManager.IsTryingToAttack)
-        {
-            if (attackCoroutine != null)
-            {
-                StopCoroutine(attackCoroutine);
-                attackCoroutine = null;
-            }
+        // 1. 타겟 탐색
+        UpdateTarget();
 
-            ClearChain();
-            return;
+        // 2. 공격 입력 처리
+        if (inputManager.IsTryingToAttack)
+        {
+            HandleAttackStart();
+            UpdateLine();
         }
-
-        if (attackCoroutine == null)
+        else
         {
-            attackCoroutine = StartCoroutine(AttackRoutine());
+            HandleAttackStop();
         }
     }
 
+    // 타겟 탐색
+    private void UpdateTarget()
+    {
+        _current = FindNearestEnemy(transform.position);
+
+        if (_current == _prev) return;
+
+        if (_prev)
+        {
+            _prev.IsDetected(false);
+            UnregisterEnemy(_prev);
+            chain.Remove(_prev);
+        }
+
+        if (_current)
+        {
+            _current.IsDetected(true);
+
+            if (!chain.Contains(_current))
+            {
+                chain.Add(_current);
+                RegisterEnemy(_current);
+            }
+        }
+
+        _prev = _current;
+    }
+    
+    private void RegisterEnemy(Enemy enemy)
+    {
+        if (enemy == null) return;
+
+        enemy.OnDeath += RemoveFromChain;
+    }
+
+    private void UnregisterEnemy(Enemy enemy)
+    {
+        if (enemy == null) return;
+
+        enemy.OnDeath -= RemoveFromChain;
+    }
+    
+    private void RemoveFromChain(Enemy enemy)
+    {
+        chain.Remove(enemy);
+
+        if (_current == enemy) _current = null;
+        if (_prev == enemy) _prev = null;
+    }
+
+    // 공격 시작
+    private void HandleAttackStart()
+    {
+        if (attackCoroutine != null) return;
+
+        attackCoroutine = StartCoroutine(AttackRoutine());
+        ActivateLine();
+    }
+
+
+    // 공격 종료
+    private void HandleAttackStop()
+    {
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine);
+            attackCoroutine = null;
+        }
+
+        _lineRenderer.positionCount = 0;
+    }
+
+    // 데미지 루프
     private IEnumerator AttackRoutine()
     {
-        while (inputManager.IsTryingToAttack)
+        while (true)
         {
-            BuildChain();
+            if (_current != null)
+                _current.TryDamage(attackDamage);
 
-            foreach (var enemy in chain)
-            {
-                if (enemy != null)
-                    enemy.TryDamage(attackDamage);
-            }
-
-            yield return new WaitForSeconds(1f);
-        }
-
-        attackCoroutine = null;
-    }
-
-    private void ClearChain()
-    {
-        foreach (var enemy in chain)
-        {
-            if (enemy != null)
-                enemy.Release();
-        }
-
-        chain.Clear();
-    }
-
-    private void BuildChain()
-    {
-        ClearChain();
-
-        Enemy first = FindNearestEnemy(transform.position);
-        if (first == null) return;
-
-        chain.Add(first);
-        first.Register();
-
-        Enemy current = first;
-
-        while (chain.Count < maxChainCount)
-        {
-            Enemy next = FindNearestEnemy(current.transform.position);
-
-            if (next == null) break;
-            if (chain.Contains(next)) break;
-
-            chain.Add(next);
-            next.Register();
-
-            current = next;
+            yield return new WaitForSeconds(attackInterval);
         }
     }
 
+    // 적 탐색
     private Enemy FindNearestEnemy(Vector2 center)
     {
         int num = Physics2D.OverlapCircleNonAlloc(center, attackRadius, detecedEnemy);
@@ -118,9 +156,27 @@ public class PlayerAttack : MonoBehaviour
         return nearest;
     }
 
-    private void OnDrawGizmos()
+    // 라인 처리
+    private void ActivateLine()
     {
-        Gizmos.color = new Color(1, 0, 0);
-        Gizmos.DrawWireSphere(transform.position, attackRadius);
+        if (!_current) _lineRenderer.positionCount = chain.Count + 2;
+        else _lineRenderer.positionCount = chain.Count + 1;
+        
+    }
+
+    private void UpdateLine()
+    {
+        _lineRenderer.SetPosition(0, transform.position);
+
+        if (_current == null)
+        {
+            _lineRenderer.SetPosition(1, transform.position + Vector3.right * attackRadius);
+            return;
+        }
+
+        for (int i = 0; i < chain.Count; i++)
+        {
+            _lineRenderer.SetPosition(i + 1, chain[i].transform.position);
+        }
     }
 }

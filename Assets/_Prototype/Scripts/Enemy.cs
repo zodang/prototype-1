@@ -1,12 +1,20 @@
-using System.Collections;
+using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public bool IsLinked;
+    public bool IsLinked { get; private set; }
     public float HP = 100;
     
+    private SpriteRenderer _spriteRenderer;
     private Coroutine _coroutine;
+    
+    public Action<Enemy> OnDeath;
+
+    private void Start()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
     public void Register()
     {
@@ -20,7 +28,19 @@ public class Enemy : MonoBehaviour
 
     public void TryDamage(float damage)
     {
-        HP -= 1;
-        if (HP <= 0) Destroy(gameObject);
+        HP -= damage;
+        if (HP <= 0) Die();
     }
+
+    public void IsDetected(bool isDetected)
+    {
+        _spriteRenderer.color = isDetected ? Color.green : Color.white;
+    }
+    
+    private void Die()
+    {
+        OnDeath?.Invoke(this);
+        Destroy(gameObject);
+    }
+
 }
