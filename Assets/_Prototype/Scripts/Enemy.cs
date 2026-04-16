@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private HPBar hpBar;
     public bool IsLinked { get; private set; }
-    public float HP = 100;
+    public float MaxHp = 100;
+    public float CurrentHp = 100;
     
     private SpriteRenderer _spriteRenderer;
     
@@ -24,6 +26,8 @@ public class Enemy : MonoBehaviour
         
         _originalScale = transform.localScale;
         _originalColor = _spriteRenderer.color;
+
+        CurrentHp = MaxHp;
     }
 
     public void Register()
@@ -38,11 +42,13 @@ public class Enemy : MonoBehaviour
 
     public void TryDamage(float damage)
     {
-        HP -= damage;
+        CurrentHp -= damage;
+        
+        hpBar.SetHP(CurrentHp, MaxHp);
         PlaySquash();
         PlayFlash();
         
-        if (HP <= 0) Die();
+        if (CurrentHp <= 0) Die();
     }
 
     public void IsDetected(bool isDetected)

@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerAttack : MonoBehaviour
 {
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private CameraEffect cameraEffect;
     private LineRenderer _lineRenderer;
 
     public int attackRadius = 2;
@@ -122,7 +123,11 @@ public class PlayerAttack : MonoBehaviour
         while (true)
         {
             if (_current != null)
+            {
                 _current.TryDamage(attackDamage);
+                cameraEffect.PlayShake();
+            }
+                
 
             yield return new WaitForSeconds(attackInterval);
         }
