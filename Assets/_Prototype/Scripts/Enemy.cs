@@ -1,11 +1,13 @@
 using System;
 using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private HPBar hpBar;
     [SerializeField] private DropManager dropManager;
+    [SerializeField] private ExplosionEffect explosionEffect;
     public bool IsLinked { get; private set; }
     public float MaxHp = 100;
     public float CurrentHp = 100;
@@ -81,8 +83,10 @@ public class Enemy : MonoBehaviour
     {
         _squashTween?.Kill();
         _colorTween?.Kill();
-        
+
+        Instantiate(explosionEffect, transform.position, Quaternion.identity);
         dropManager.Drop(transform.position);
+        
         OnDeath?.Invoke(this);
         Destroy(gameObject);
     }
