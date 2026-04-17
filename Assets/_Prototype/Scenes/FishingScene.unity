@@ -197,8 +197,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 1764441012}
-  MaxHp: 10
-  CurrentHp: 100
+  dropManager: {fileID: 650972119}
+  MaxHp: 5
+  CurrentHp: 0
 --- !u!212 &19304289
 SpriteRenderer:
   serializedVersion: 2
@@ -1132,8 +1133,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 632106333}
-  MaxHp: 10
-  CurrentHp: 100
+  dropManager: {fileID: 650972119}
+  MaxHp: 5
+  CurrentHp: 0
 --- !u!212 &525224304
 SpriteRenderer:
   serializedVersion: 2
@@ -1493,6 +1495,53 @@ Transform:
   - {fileID: 1212481561}
   m_Father: {fileID: 525224305}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &650972118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 650972120}
+  - component: {fileID: 650972119}
+  m_Layer: 0
+  m_Name: DropManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &650972119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650972118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30691a877234f844dad08ede50a4c697, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DropManager
+  itemPrefab: {fileID: -7322692313472514704, guid: be64c65740a09434e9d48f154a3b249b, type: 3}
+  minDropCount: 3
+  maxDropCount: 6
+--- !u!4 &650972120
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650972118}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &676264241
 GameObject:
   m_ObjectHideFlags: 0
@@ -1753,8 +1802,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 588860391}
-  MaxHp: 10
-  CurrentHp: 100
+  dropManager: {fileID: 650972119}
+  MaxHp: 5
+  CurrentHp: 0
 --- !u!212 &738966869
 SpriteRenderer:
   serializedVersion: 2
@@ -1937,8 +1987,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 190993944}
-  MaxHp: 10
-  CurrentHp: 100
+  dropManager: {fileID: 650972119}
+  MaxHp: 5
+  CurrentHp: 0
 --- !u!61 &782130459
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2233,8 +2284,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 1745058603}
-  MaxHp: 10
-  CurrentHp: 100
+  dropManager: {fileID: 650972119}
+  MaxHp: 5
+  CurrentHp: 0
 --- !u!212 &1152497672
 SpriteRenderer:
   serializedVersion: 2
@@ -2691,7 +2743,7 @@ GameObject:
   - component: {fileID: 1398753575}
   m_Layer: 0
   m_Name: Buddie
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3603,8 +3655,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 1405237339}
-  MaxHp: 10
-  CurrentHp: 100
+  dropManager: {fileID: 650972119}
+  MaxHp: 5
+  CurrentHp: 0
 --- !u!212 &1790985921
 SpriteRenderer:
   serializedVersion: 2
@@ -3849,8 +3902,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 2100479070}
-  MaxHp: 10
-  CurrentHp: 100
+  dropManager: {fileID: 650972119}
+  MaxHp: 5
+  CurrentHp: 0
 --- !u!212 &1873907885
 SpriteRenderer:
   serializedVersion: 2
@@ -4257,6 +4311,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1406903559}
   - {fileID: 240833239}
+  - {fileID: 650972120}
   - {fileID: 8849120332858178045}
   - {fileID: 782130455}
   - {fileID: 738966870}

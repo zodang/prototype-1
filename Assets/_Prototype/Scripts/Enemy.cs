@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private HPBar hpBar;
+    [SerializeField] private DropManager dropManager;
     public bool IsLinked { get; private set; }
     public float MaxHp = 100;
     public float CurrentHp = 100;
@@ -81,6 +82,7 @@ public class Enemy : MonoBehaviour
         _squashTween?.Kill();
         _colorTween?.Kill();
         
+        dropManager.Drop(transform.position);
         OnDeath?.Invoke(this);
         Destroy(gameObject);
     }
