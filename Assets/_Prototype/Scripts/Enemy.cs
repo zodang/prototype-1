@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private HPBar hpBar;
     [SerializeField] private DropManager dropManager;
+    [SerializeField] private ExplosionEffect hitEffect;
     [SerializeField] private ExplosionEffect explosionEffect;
     public bool IsLinked { get; private set; }
     public float MaxHp = 100;
@@ -50,6 +51,8 @@ public class Enemy : MonoBehaviour
         hpBar.SetHP(CurrentHp, MaxHp);
         PlaySquash();
         PlayFlash();
+        
+        Instantiate(hitEffect, transform.position, Quaternion.identity);
         
         if (CurrentHp <= 0) Die();
     }

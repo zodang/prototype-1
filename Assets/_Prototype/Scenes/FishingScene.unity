@@ -198,7 +198,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 1764441012}
   dropManager: {fileID: 650972119}
-  explosionEffect: {fileID: -6679902401791857034, guid: 79b891d9d9e04b84fa7b375c63eaa453, type: 3}
+  hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
+  explosionEffect: {fileID: 1377218196129436866, guid: b9b6559f50b8434458762fab9b974917, type: 3}
   MaxHp: 5
   CurrentHp: 0
 --- !u!212 &19304289
@@ -1135,7 +1136,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 632106333}
   dropManager: {fileID: 650972119}
-  explosionEffect: {fileID: -6679902401791857034, guid: 79b891d9d9e04b84fa7b375c63eaa453, type: 3}
+  hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
+  explosionEffect: {fileID: 1377218196129436866, guid: b9b6559f50b8434458762fab9b974917, type: 3}
   MaxHp: 5
   CurrentHp: 0
 --- !u!212 &525224304
@@ -1805,7 +1807,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 588860391}
   dropManager: {fileID: 650972119}
-  explosionEffect: {fileID: -6679902401791857034, guid: 79b891d9d9e04b84fa7b375c63eaa453, type: 3}
+  hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
+  explosionEffect: {fileID: 1377218196129436866, guid: b9b6559f50b8434458762fab9b974917, type: 3}
   MaxHp: 5
   CurrentHp: 0
 --- !u!212 &738966869
@@ -1992,7 +1995,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 190993944}
   dropManager: {fileID: 650972119}
-  explosionEffect: {fileID: -6679902401791857034, guid: 79b891d9d9e04b84fa7b375c63eaa453, type: 3}
+  hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
+  explosionEffect: {fileID: 1377218196129436866, guid: b9b6559f50b8434458762fab9b974917, type: 3}
   MaxHp: 5
   CurrentHp: 0
 --- !u!61 &782130459
@@ -2290,7 +2294,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 1745058603}
   dropManager: {fileID: 650972119}
-  explosionEffect: {fileID: -6679902401791857034, guid: 79b891d9d9e04b84fa7b375c63eaa453, type: 3}
+  hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
+  explosionEffect: {fileID: 1377218196129436866, guid: b9b6559f50b8434458762fab9b974917, type: 3}
   MaxHp: 5
   CurrentHp: 0
 --- !u!212 &1152497672
@@ -3753,7 +3758,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 1405237339}
   dropManager: {fileID: 650972119}
-  explosionEffect: {fileID: -6679902401791857034, guid: 79b891d9d9e04b84fa7b375c63eaa453, type: 3}
+  hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
+  explosionEffect: {fileID: 1377218196129436866, guid: b9b6559f50b8434458762fab9b974917, type: 3}
   MaxHp: 5
   CurrentHp: 0
 --- !u!212 &1790985921
@@ -4001,7 +4007,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   hpBar: {fileID: 2100479070}
   dropManager: {fileID: 650972119}
-  explosionEffect: {fileID: -6679902401791857034, guid: 79b891d9d9e04b84fa7b375c63eaa453, type: 3}
+  hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
+  explosionEffect: {fileID: 1377218196129436866, guid: b9b6559f50b8434458762fab9b974917, type: 3}
   MaxHp: 5
   CurrentHp: 0
 --- !u!212 &1873907885
