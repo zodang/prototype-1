@@ -12,7 +12,7 @@ public class PlayerAttack : MonoBehaviour
     public float attackDamage = 1;
     public float attackInterval = 1.0f;
 
-    private BoxCollider2D[] detecedEnemy = new BoxCollider2D[6];
+    private BoxCollider2D[] detecedEnemy = new BoxCollider2D[16];
 
     public int maxChainCount = 3;
     public List<Enemy> chain = new List<Enemy>();
@@ -20,7 +20,7 @@ public class PlayerAttack : MonoBehaviour
     private Coroutine attackCoroutine;
 
     private Enemy _current;
-    private Enemy _prev;
+    private readonly List<Enemy> _previousChain = new List<Enemy>();
 
     private void Start()
     {
@@ -48,29 +48,40 @@ public class PlayerAttack : MonoBehaviour
     // 타겟 탐색
     private void UpdateTarget()
     {
-        _current = FindNearestEnemy(transform.position);
+        _previousChain.Clear();
+        _previousChain.AddRange(chain);
 
-        if (_current == _prev) return;
+        chain.Clear();
 
-        if (_prev)
+        Vector2 searchCenter = transform.position;
+        for (int i = 0; i < maxChainCount; i++)
         {
-            _prev.IsDetected(false);
-            UnregisterEnemy(_prev);
-            chain.Remove(_prev);
+            Enemy nearest = FindNearestEnemy(searchCenter);
+            if (nearest == null) break;
+
+            chain.Add(nearest);
+            searchCenter = nearest.transform.position;
         }
 
-        if (_current)
+        foreach (Enemy enemy in _previousChain)
         {
-            _current.IsDetected(true);
+            if (enemy == null || chain.Contains(enemy)) continue;
 
-            if (!chain.Contains(_current))
-            {
-                chain.Add(_current);
-                RegisterEnemy(_current);
-            }
+            enemy.IsDetected(false);
+            enemy.Release();
+            UnregisterEnemy(enemy);
         }
 
-        _prev = _current;
+        foreach (Enemy enemy in chain)
+        {
+            if (enemy == null || _previousChain.Contains(enemy)) continue;
+
+            enemy.IsDetected(true);
+            enemy.Register();
+            RegisterEnemy(enemy);
+        }
+
+        _current = chain.Count > 0 ? chain[0] : null;
     }
     
     private void RegisterEnemy(Enemy enemy)
@@ -92,7 +103,6 @@ public class PlayerAttack : MonoBehaviour
         chain.Remove(enemy);
 
         if (_current == enemy) _current = null;
-        if (_prev == enemy) _prev = null;
     }
 
     // 공격 시작
@@ -122,9 +132,19 @@ public class PlayerAttack : MonoBehaviour
     {
         while (true)
         {
-            if (_current != null)
+            if (chain.Count > 0)
             {
-                _current.TryDamage(attackDamage);
+                for (int i = chain.Count - 1; i >= 0; i--)
+                {
+                    if (chain[i] == null)
+                    {
+                        chain.RemoveAt(i);
+                        continue;
+                    }
+
+                    chain[i].TryDamage(attackDamage);
+                }
+
                 cameraEffect.PlayShake();
             }
                 
@@ -148,7 +168,8 @@ public class PlayerAttack : MonoBehaviour
 
             var enemy = col.GetComponent<Enemy>();
             if (enemy == null) continue;
-            if (enemy.IsLinked) continue;
+            if (enemy.IsLinked && !_previousChain.Contains(enemy)) continue;
+            if (chain.Contains(enemy)) continue;
 
             float dist = Vector2.Distance(center, enemy.transform.position);
             if (dist < minDistance)
@@ -164,13 +185,12 @@ public class PlayerAttack : MonoBehaviour
     // 라인 처리
     private void ActivateLine()
     {
-        if (!_current) _lineRenderer.positionCount = chain.Count + 2;
-        else _lineRenderer.positionCount = chain.Count + 1;
-        
+        _lineRenderer.positionCount = Mathf.Max(chain.Count + 1, 2);
     }
 
     private void UpdateLine()
     {
+        ActivateLine();
         _lineRenderer.SetPosition(0, transform.position);
 
         if (_current == null)
