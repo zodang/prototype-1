@@ -15,16 +15,20 @@ public class PlayerAttack : MonoBehaviour
     private BoxCollider2D[] detecedEnemy = new BoxCollider2D[16];
 
     public int maxChainCount = 3;
+    public int maxChainBranchCount = 1;
     public List<Enemy> chain = new List<Enemy>();
 
     private Coroutine attackCoroutine;
 
     private Enemy _current;
     private readonly List<Enemy> _previousChain = new List<Enemy>();
+    private readonly List<List<Enemy>> _chainBranches = new List<List<Enemy>>();
+    private readonly List<LineRenderer> _branchLineRenderers = new List<LineRenderer>();
 
     private void Start()
     {
         _lineRenderer = GetComponent<LineRenderer>();
+        _branchLineRenderers.Add(_lineRenderer);
         _lineRenderer.positionCount = 0;
     }
 
@@ -52,15 +56,28 @@ public class PlayerAttack : MonoBehaviour
         _previousChain.AddRange(chain);
 
         chain.Clear();
+        _chainBranches.Clear();
 
-        Vector2 searchCenter = transform.position;
-        for (int i = 0; i < maxChainCount; i++)
+        int branchCount = Mathf.Max(maxChainBranchCount, 1);
+        for (int branchIndex = 0; branchIndex < branchCount; branchIndex++)
         {
-            Enemy nearest = FindNearestEnemy(searchCenter);
-            if (nearest == null) break;
+            List<Enemy> branch = new List<Enemy>();
+            Vector2 searchCenter = transform.position;
 
-            chain.Add(nearest);
-            searchCenter = nearest.transform.position;
+            for (int i = 0; i < maxChainCount; i++)
+            {
+                Enemy nearest = FindNearestEnemy(searchCenter);
+                if (nearest == null) break;
+
+                branch.Add(nearest);
+                chain.Add(nearest);
+                searchCenter = nearest.transform.position;
+            }
+
+            if (branch.Count > 0)
+            {
+                _chainBranches.Add(branch);
+            }
         }
 
         foreach (Enemy enemy in _previousChain)
@@ -101,6 +118,14 @@ public class PlayerAttack : MonoBehaviour
     private void RemoveFromChain(Enemy enemy)
     {
         chain.Remove(enemy);
+        for (int i = _chainBranches.Count - 1; i >= 0; i--)
+        {
+            _chainBranches[i].Remove(enemy);
+            if (_chainBranches[i].Count == 0)
+            {
+                _chainBranches.RemoveAt(i);
+            }
+        }
 
         if (_current == enemy) _current = null;
     }
@@ -124,7 +149,7 @@ public class PlayerAttack : MonoBehaviour
             attackCoroutine = null;
         }
 
-        _lineRenderer.positionCount = 0;
+        ClearLines();
     }
 
     // 데미지 루프
@@ -185,23 +210,93 @@ public class PlayerAttack : MonoBehaviour
     // 라인 처리
     private void ActivateLine()
     {
-        _lineRenderer.positionCount = Mathf.Max(chain.Count + 1, 2);
+        if (_chainBranches.Count == 0)
+        {
+            _lineRenderer.positionCount = 2;
+
+            for (int i = 1; i < _branchLineRenderers.Count; i++)
+            {
+                _branchLineRenderers[i].positionCount = 0;
+            }
+
+            return;
+        }
+
+        for (int i = 0; i < _chainBranches.Count; i++)
+        {
+            LineRenderer lineRenderer = GetLineRenderer(i);
+            lineRenderer.positionCount = Mathf.Max(_chainBranches[i].Count + 1, 2);
+        }
+
+        for (int i = _chainBranches.Count; i < _branchLineRenderers.Count; i++)
+        {
+            _branchLineRenderers[i].positionCount = 0;
+        }
     }
 
     private void UpdateLine()
     {
         ActivateLine();
-        _lineRenderer.SetPosition(0, transform.position);
 
-        if (_current == null)
+        if (_chainBranches.Count == 0)
         {
+            _lineRenderer.SetPosition(0, transform.position);
             _lineRenderer.SetPosition(1, transform.position + Vector3.right * attackRadius);
             return;
         }
 
-        for (int i = 0; i < chain.Count; i++)
+        for (int branchIndex = 0; branchIndex < _chainBranches.Count; branchIndex++)
         {
-            _lineRenderer.SetPosition(i + 1, chain[i].transform.position);
+            LineRenderer lineRenderer = GetLineRenderer(branchIndex);
+            List<Enemy> branch = _chainBranches[branchIndex];
+
+            lineRenderer.SetPosition(0, transform.position);
+            for (int i = 0; i < branch.Count; i++)
+            {
+                lineRenderer.SetPosition(i + 1, branch[i].transform.position);
+            }
+        }
+    }
+
+    private LineRenderer GetLineRenderer(int index)
+    {
+        while (_branchLineRenderers.Count <= index)
+        {
+            LineRenderer lineRenderer = CreateBranchLineRenderer(_branchLineRenderers.Count);
+            _branchLineRenderers.Add(lineRenderer);
+        }
+
+        return _branchLineRenderers[index];
+    }
+
+    private LineRenderer CreateBranchLineRenderer(int index)
+    {
+        GameObject lineObject = new GameObject($"ChainBranchLine_{index}");
+        lineObject.transform.SetParent(transform);
+
+        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+        lineRenderer.useWorldSpace = _lineRenderer.useWorldSpace;
+        lineRenderer.material = _lineRenderer.material;
+        lineRenderer.startWidth = _lineRenderer.startWidth;
+        lineRenderer.endWidth = _lineRenderer.endWidth;
+        lineRenderer.startColor = _lineRenderer.startColor;
+        lineRenderer.endColor = _lineRenderer.endColor;
+        lineRenderer.sortingLayerID = _lineRenderer.sortingLayerID;
+        lineRenderer.sortingOrder = _lineRenderer.sortingOrder;
+        lineRenderer.textureMode = _lineRenderer.textureMode;
+        lineRenderer.alignment = _lineRenderer.alignment;
+        lineRenderer.numCapVertices = _lineRenderer.numCapVertices;
+        lineRenderer.numCornerVertices = _lineRenderer.numCornerVertices;
+        lineRenderer.positionCount = 0;
+
+        return lineRenderer;
+    }
+
+    private void ClearLines()
+    {
+        for (int i = 0; i < _branchLineRenderers.Count; i++)
+        {
+            _branchLineRenderers[i].positionCount = 0;
         }
     }
 }
