@@ -61,22 +61,31 @@ public class PlayerAttack : MonoBehaviour
         int branchCount = Mathf.Max(maxChainBranchCount, 1);
         for (int branchIndex = 0; branchIndex < branchCount; branchIndex++)
         {
-            List<Enemy> branch = new List<Enemy>();
-            Vector2 searchCenter = transform.position;
+            _chainBranches.Add(new List<Enemy>());
+        }
 
-            for (int i = 0; i < maxChainCount; i++)
+        for (int chainDepth = 0; chainDepth < maxChainCount; chainDepth++)
+        {
+            for (int branchIndex = 0; branchIndex < _chainBranches.Count; branchIndex++)
             {
+                List<Enemy> branch = _chainBranches[branchIndex];
+                Vector2 searchCenter = branch.Count > 0
+                    ? (Vector2)branch[branch.Count - 1].transform.position
+                    : (Vector2)transform.position;
+
                 Enemy nearest = FindNearestEnemy(searchCenter);
-                if (nearest == null) break;
+                if (nearest == null) continue;
 
                 branch.Add(nearest);
                 chain.Add(nearest);
-                searchCenter = nearest.transform.position;
             }
+        }
 
-            if (branch.Count > 0)
+        for (int i = _chainBranches.Count - 1; i >= 0; i--)
+        {
+            if (_chainBranches[i].Count == 0)
             {
-                _chainBranches.Add(branch);
+                _chainBranches.RemoveAt(i);
             }
         }
 
