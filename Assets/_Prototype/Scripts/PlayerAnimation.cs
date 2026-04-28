@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerAnimation : MonoBehaviour
 {
     [SerializeField] private InputManager inputManager;
+    [SerializeField] private PlayerAttack playerAttack;
     
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
@@ -22,8 +23,8 @@ public class PlayerAnimation : MonoBehaviour
         
         inputManager.OnLookEvent += HandleLook;
         
-        inputManager.OnAttackStartedEvent += HandleAttackStarted;
-        inputManager.OnAttackEndedEvent += HandleAttackEnded;
+        inputManager.OnChainAttackStartedEvent += HandleAttackStarted;
+        inputManager.OnChainAttackEndedEvent += HandleAttackEnded;
     }
     
     private void OnDisable()
@@ -32,6 +33,9 @@ public class PlayerAnimation : MonoBehaviour
         inputManager.OnMoveEndEvent -= HandleMoveEnded;
         
         inputManager.OnLookEvent -= HandleLook;
+
+        inputManager.OnChainAttackStartedEvent -= HandleAttackStarted;
+        inputManager.OnChainAttackEndedEvent -= HandleAttackEnded;
     }
     
 
@@ -39,6 +43,10 @@ public class PlayerAnimation : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _spriteRenderer =  GetComponent<SpriteRenderer>();
+        if (playerAttack == null)
+        {
+            playerAttack = GetComponent<PlayerAttack>();
+        }
     }
 
     private void Update()
@@ -49,6 +57,11 @@ public class PlayerAnimation : MonoBehaviour
         
         if (_direction.x > 0) _spriteRenderer.flipX = false;
         if (_direction.x < 0) _spriteRenderer.flipX = true;
+
+        if (playerAttack != null)
+        {
+            _animator.SetBool(IsAttacking, inputManager.IsTryingToChainAttack && playerAttack.CanUseChainAttack);
+        }
     }
 
     private void HandleMoveStarted()

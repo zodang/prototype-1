@@ -111,16 +111,16 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Jump"",
+                    ""name"": ""BasicAttack"",
                     ""type"": ""Button"",
-                    ""id"": ""403a8ddd-14d9-447d-a611-8f5068e59549"",
+                    ""id"": ""5dafa051-8d43-4d42-8e20-36d313dde27f"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Attack"",
+                    ""name"": ""ChainAttack"",
                     ""type"": ""Button"",
                     ""id"": ""5b2188a2-643d-48e5-b0a1-e8715b2fd28b"",
                     ""expectedControlType"": """",
@@ -198,23 +198,23 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""88bd52d6-f97c-4d49-83dc-d8ef6e455e9c"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""85cd5c69-a20f-40e5-839f-205ff44777a0"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Attack"",
+                    ""action"": ""ChainAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c9f97dff-4237-4483-b5df-b48d6cc20842"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BasicAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -272,8 +272,8 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
-        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
-        m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
+        m_Player_BasicAttack = m_Player.FindAction("BasicAttack", throwIfNotFound: true);
+        m_Player_ChainAttack = m_Player.FindAction("ChainAttack", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_UIMove = m_UI.FindAction("UIMove", throwIfNotFound: true);
@@ -360,8 +360,8 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
-    private readonly InputAction m_Player_Jump;
-    private readonly InputAction m_Player_Attack;
+    private readonly InputAction m_Player_BasicAttack;
+    private readonly InputAction m_Player_ChainAttack;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -382,13 +382,13 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Look => m_Wrapper.m_Player_Look;
         /// <summary>
-        /// Provides access to the underlying input action "Player/Jump".
+        /// Provides access to the underlying input action "Player/BasicAttack".
         /// </summary>
-        public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @BasicAttack => m_Wrapper.m_Player_BasicAttack;
         /// <summary>
-        /// Provides access to the underlying input action "Player/Attack".
+        /// Provides access to the underlying input action "Player/ChainAttack".
         /// </summary>
-        public InputAction @Attack => m_Wrapper.m_Player_Attack;
+        public InputAction @ChainAttack => m_Wrapper.m_Player_ChainAttack;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -421,12 +421,12 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
             @Look.started += instance.OnLook;
             @Look.performed += instance.OnLook;
             @Look.canceled += instance.OnLook;
-            @Jump.started += instance.OnJump;
-            @Jump.performed += instance.OnJump;
-            @Jump.canceled += instance.OnJump;
-            @Attack.started += instance.OnAttack;
-            @Attack.performed += instance.OnAttack;
-            @Attack.canceled += instance.OnAttack;
+            @BasicAttack.started += instance.OnBasicAttack;
+            @BasicAttack.performed += instance.OnBasicAttack;
+            @BasicAttack.canceled += instance.OnBasicAttack;
+            @ChainAttack.started += instance.OnChainAttack;
+            @ChainAttack.performed += instance.OnChainAttack;
+            @ChainAttack.canceled += instance.OnChainAttack;
         }
 
         /// <summary>
@@ -444,12 +444,12 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
             @Look.started -= instance.OnLook;
             @Look.performed -= instance.OnLook;
             @Look.canceled -= instance.OnLook;
-            @Jump.started -= instance.OnJump;
-            @Jump.performed -= instance.OnJump;
-            @Jump.canceled -= instance.OnJump;
-            @Attack.started -= instance.OnAttack;
-            @Attack.performed -= instance.OnAttack;
-            @Attack.canceled -= instance.OnAttack;
+            @BasicAttack.started -= instance.OnBasicAttack;
+            @BasicAttack.performed -= instance.OnBasicAttack;
+            @BasicAttack.canceled -= instance.OnBasicAttack;
+            @ChainAttack.started -= instance.OnChainAttack;
+            @ChainAttack.performed -= instance.OnChainAttack;
+            @ChainAttack.canceled -= instance.OnChainAttack;
         }
 
         /// <summary>
@@ -614,19 +614,19 @@ public partial class @PlayerActionsAsset: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLook(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Jump" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "BasicAttack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnJump(InputAction.CallbackContext context);
+        void OnBasicAttack(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "ChainAttack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAttack(InputAction.CallbackContext context);
+        void OnChainAttack(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

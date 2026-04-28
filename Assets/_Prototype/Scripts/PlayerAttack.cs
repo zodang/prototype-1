@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -11,6 +12,13 @@ public class PlayerAttack : MonoBehaviour
     public int attackRadius = 2;
     public float attackDamage = 1;
     public float attackInterval = 1.0f;
+    [SerializeField] private float chainAttackEmptyDisplaySeconds = 0.15f;
+    [SerializeField] private float chainAttackHoldSeconds = 0.15f;
+
+    [Header("Chain Attack Resource")]
+    [SerializeField] private float maxChainAttackAmount = 5f;
+    [SerializeField] private float chainAttackDecreasePerSecond = 1f;
+    [SerializeField] private float chainAttackReloadSeconds = 3f;
 
     private BoxCollider2D[] detecedEnemy = new BoxCollider2D[16];
 
@@ -19,17 +27,39 @@ public class PlayerAttack : MonoBehaviour
     public List<Enemy> chain = new List<Enemy>();
 
     private Coroutine attackCoroutine;
+    private Coroutine reloadCoroutine;
 
     private Enemy _current;
     private readonly List<Enemy> _previousChain = new List<Enemy>();
     private readonly List<List<Enemy>> _chainBranches = new List<List<Enemy>>();
     private readonly List<LineRenderer> _branchLineRenderers = new List<LineRenderer>();
+    public float _currentChainAttackAmount;
+    private float _chainAttackDecreaseTimer;
+    private float _chainAttackHoldTimer;
+
+    public float MaxChainAttackAmount => maxChainAttackAmount;
+    public float CurrentChainAttackAmount => _currentChainAttackAmount;
+    public float NormalizedChainAttackAmount => maxChainAttackAmount <= 0f ? 0f : Mathf.Clamp01(_currentChainAttackAmount / maxChainAttackAmount);
+    public bool IsChainAttackReloading => reloadCoroutine != null;
+    public bool CanUseChainAttack => !IsChainAttackReloading && _currentChainAttackAmount > 0f;
+    public event Action<float, float> OnChainAttackAmountChanged;
+
+    private void OnValidate()
+    {
+        maxChainAttackAmount = Mathf.Max(0f, maxChainAttackAmount);
+        chainAttackDecreasePerSecond = Mathf.Max(0f, chainAttackDecreasePerSecond);
+        chainAttackReloadSeconds = Mathf.Max(0f, chainAttackReloadSeconds);
+        chainAttackEmptyDisplaySeconds = Mathf.Max(0f, chainAttackEmptyDisplaySeconds);
+        chainAttackHoldSeconds = Mathf.Max(0f, chainAttackHoldSeconds);
+    }
 
     private void Start()
     {
         _lineRenderer = GetComponent<LineRenderer>();
         _branchLineRenderers.Add(_lineRenderer);
         _lineRenderer.positionCount = 0;
+        _currentChainAttackAmount = Mathf.Max(0f, maxChainAttackAmount);
+        NotifyChainAttackAmountChanged();
     }
 
     private void Update()
@@ -38,13 +68,22 @@ public class PlayerAttack : MonoBehaviour
         UpdateTarget();
 
         // 2. 공격 입력 처리
-        if (inputManager.IsTryingToAttack)
+        if (inputManager.IsTryingToChainAttack && CanUseChainAttack)
         {
+            _chainAttackHoldTimer += Time.deltaTime;
+            if (_chainAttackHoldTimer < chainAttackHoldSeconds)
+            {
+                HandleAttackStop();
+                return;
+            }
+
             HandleAttackStart();
+            DecreaseChainAttackAmount();
             UpdateLine();
         }
         else
         {
+            _chainAttackHoldTimer = 0f;
             HandleAttackStop();
         }
     }
@@ -142,7 +181,11 @@ public class PlayerAttack : MonoBehaviour
     // 공격 시작
     private void HandleAttackStart()
     {
-        if (attackCoroutine != null) return;
+        if (attackCoroutine != null || !CanUseChainAttack) return;
+
+        _chainAttackDecreaseTimer = 0f;
+        DecreaseChainAttackAmountByOne();
+        if (!CanUseChainAttack) return;
 
         attackCoroutine = StartCoroutine(AttackRoutine());
         ActivateLine();
@@ -152,13 +195,109 @@ public class PlayerAttack : MonoBehaviour
     // 공격 종료
     private void HandleAttackStop()
     {
+        StopAttack();
+        ClearLines();
+    }
+
+    private void StopAttack()
+    {
         if (attackCoroutine != null)
         {
             StopCoroutine(attackCoroutine);
             attackCoroutine = null;
         }
 
+        _chainAttackDecreaseTimer = 0f;
+    }
+
+    private void DecreaseChainAttackAmount()
+    {
+        if (_currentChainAttackAmount <= 0f || chainAttackDecreasePerSecond <= 0f)
+        {
+            if (_currentChainAttackAmount <= 0f)
+            {
+                StartReload();
+            }
+
+            return;
+        }
+
+        _chainAttackDecreaseTimer += Time.deltaTime;
+        float decreaseInterval = 1f / chainAttackDecreasePerSecond;
+
+        while (_chainAttackDecreaseTimer >= decreaseInterval && _currentChainAttackAmount > 0f)
+        {
+            _chainAttackDecreaseTimer -= decreaseInterval;
+            DecreaseChainAttackAmountByOne();
+        }
+    }
+
+    private void DecreaseChainAttackAmountByOne()
+    {
+        _currentChainAttackAmount = Mathf.Max(0f, _currentChainAttackAmount - 1f);
+        NotifyChainAttackAmountChanged();
+
+        if (_currentChainAttackAmount <= 0f)
+        {
+            StartReload();
+        }
+    }
+
+    private void StartReload()
+    {
+        if (reloadCoroutine != null) return;
+
+        StopAttack();
         ClearLines();
+        _chainAttackDecreaseTimer = 0f;
+        _currentChainAttackAmount = 0f;
+        NotifyChainAttackAmountChanged();
+        reloadCoroutine = StartCoroutine(ReloadRoutine());
+    }
+
+    private IEnumerator ReloadRoutine()
+    {
+        if (chainAttackEmptyDisplaySeconds > 0f)
+        {
+            yield return new WaitForSeconds(chainAttackEmptyDisplaySeconds);
+        }
+        else
+        {
+            yield return null;
+        }
+
+        float reloadDuration = Mathf.Max(0f, chainAttackReloadSeconds);
+        if (reloadDuration <= 0f)
+        {
+            _currentChainAttackAmount = Mathf.Max(0f, maxChainAttackAmount);
+            reloadCoroutine = null;
+            NotifyChainAttackAmountChanged();
+            yield break;
+        }
+
+        int reloadStepCount = Mathf.CeilToInt(maxChainAttackAmount);
+        if (reloadStepCount <= 0)
+        {
+            _currentChainAttackAmount = 0f;
+            reloadCoroutine = null;
+            NotifyChainAttackAmountChanged();
+            yield break;
+        }
+
+        float reloadInterval = reloadDuration / reloadStepCount;
+        while (_currentChainAttackAmount < maxChainAttackAmount)
+        {
+            yield return new WaitForSeconds(reloadInterval);
+            _currentChainAttackAmount = Mathf.Min(maxChainAttackAmount, _currentChainAttackAmount + 1f);
+            NotifyChainAttackAmountChanged();
+        }
+
+        reloadCoroutine = null;
+    }
+
+    private void NotifyChainAttackAmountChanged()
+    {
+        OnChainAttackAmountChanged?.Invoke(_currentChainAttackAmount, maxChainAttackAmount);
     }
 
     // 데미지 루프

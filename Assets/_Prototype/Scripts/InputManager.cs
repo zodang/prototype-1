@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,17 +12,21 @@ public class InputManager : MonoBehaviour
     public event Action OnMoveEndEvent;
     
     public event Action<Vector2> OnLookEvent;
-    public event Action OnJumpEvent;
-    public event Action OnAttackStartedEvent;
-    public event Action OnAttackPerformedEvent;
-    public event Action OnAttackEndedEvent;
+
+    public event Action OnBasicAttackStartedEvent;
+    public event Action OnBasicAttackPerformedEvent;
+    public event Action OnBasicAttackEndedEvent;
+
+    public event Action OnChainAttackStartedEvent;
+    public event Action OnChainAttackPerformedEvent;
+    public event Action OnChainAttackEndedEvent;
     
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
-    public float JumpInput;
 
     public bool IsTryingToMove { get; private set; }
-    public bool IsTryingToAttack { get; private set; }
+    public bool IsTryingToBasicAttack { get; private set; }
+    public bool IsTryingToChainAttack { get; private set; }
 
     private void Awake()
     {
@@ -39,11 +42,15 @@ public class InputManager : MonoBehaviour
         _playerActions.Move.canceled += OnMoveCanceled;
         
         _playerActions.Look.performed += OnLookPerformed;
-        _playerActions.Jump.performed += OnJumpPerformed;
 
-        _playerActions.Attack.started += OnAttackStarted;
-        _playerActions.Attack.performed += OnAttackPerformed;
-        _playerActions.Attack.canceled += OnAttackEnded;
+        _playerActions.BasicAttack.started += OnBasicAttackStarted;
+        _playerActions.BasicAttack.performed += OnBasicAttackPerformed;
+        _playerActions.BasicAttack.canceled += OnBasicAttackEnded;
+
+        _playerActions.ChainAttack.started += OnChainAttackStarted;
+        _playerActions.ChainAttack.performed += OnChainAttackPerformed;
+        _playerActions.ChainAttack.canceled += OnChainAttackEnded;
+        
     }
     
     private void OnDisable()
@@ -53,10 +60,14 @@ public class InputManager : MonoBehaviour
         _playerActions.Move.canceled -= OnMoveCanceled;
         
         _playerActions.Look.performed -= OnLookPerformed;
-        _playerActions.Jump.performed -= OnJumpPerformed;
+
+        _playerActions.BasicAttack.started -= OnBasicAttackStarted;
+        _playerActions.BasicAttack.performed -= OnBasicAttackPerformed;
+        _playerActions.BasicAttack.canceled -= OnBasicAttackEnded;
         
-        _playerActions.Attack.started -= OnAttackStarted;
-        _playerActions.Attack.canceled -= OnAttackEnded;
+        _playerActions.ChainAttack.started -= OnChainAttackStarted;
+        _playerActions.ChainAttack.performed -= OnChainAttackPerformed;
+        _playerActions.ChainAttack.canceled -= OnChainAttackEnded;
     }
     
     private void OnMoveStarted(InputAction.CallbackContext context)
@@ -85,26 +96,37 @@ public class InputManager : MonoBehaviour
         OnLookEvent?.Invoke(LookInput);
     }
 
-    private void OnJumpPerformed(InputAction.CallbackContext context)
+    private void OnBasicAttackStarted(InputAction.CallbackContext context)
     {
-        JumpInput = context.ReadValue<float>();
-        OnJumpEvent?.Invoke();
-    }
-    
-    private void OnAttackStarted(InputAction.CallbackContext context)
-    {
-        IsTryingToAttack = true;
-        OnAttackStartedEvent?.Invoke();
+        IsTryingToBasicAttack = true;
+        OnBasicAttackStartedEvent?.Invoke();
     }
 
-    private void OnAttackPerformed(InputAction.CallbackContext context)
+    private void OnBasicAttackPerformed(InputAction.CallbackContext context)
     {
-        OnAttackPerformedEvent?.Invoke();
+        OnBasicAttackPerformedEvent?.Invoke();
     }
     
-    private void OnAttackEnded(InputAction.CallbackContext context)
+    private void OnBasicAttackEnded(InputAction.CallbackContext context)
     {
-        IsTryingToAttack = false;
-        OnAttackEndedEvent?.Invoke();
+        IsTryingToBasicAttack = false;
+        OnBasicAttackEndedEvent?.Invoke();
+    }
+    
+    private void OnChainAttackStarted(InputAction.CallbackContext context)
+    {
+        IsTryingToChainAttack = true;
+        OnChainAttackStartedEvent?.Invoke();
+    }
+
+    private void OnChainAttackPerformed(InputAction.CallbackContext context)
+    {
+        OnChainAttackPerformedEvent?.Invoke();
+    }
+    
+    private void OnChainAttackEnded(InputAction.CallbackContext context)
+    {
+        IsTryingToChainAttack = false;
+        OnChainAttackEndedEvent?.Invoke();
     }
 }

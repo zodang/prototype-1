@@ -25,16 +25,16 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump",
+                    "name": "BasicAttack",
                     "type": "Button",
-                    "id": "403a8ddd-14d9-447d-a611-8f5068e59549",
+                    "id": "5dafa051-8d43-4d42-8e20-36d313dde27f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Attack",
+                    "name": "ChainAttack",
                     "type": "Button",
                     "id": "5b2188a2-643d-48e5-b0a1-e8715b2fd28b",
                     "expectedControlType": "",
@@ -112,23 +112,23 @@
                 },
                 {
                     "name": "",
-                    "id": "88bd52d6-f97c-4d49-83dc-d8ef6e455e9c",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "85cd5c69-a20f-40e5-839f-205ff44777a0",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Attack",
+                    "action": "ChainAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c9f97dff-4237-4483-b5df-b48d6cc20842",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BasicAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
