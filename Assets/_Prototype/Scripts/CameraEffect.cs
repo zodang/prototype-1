@@ -3,51 +3,89 @@ using UnityEngine;
 
 public class CameraEffect : MonoBehaviour
 {
+    [Header("Follow")]
+    [SerializeField] private Transform followTarget;
+    [SerializeField] private float followSmoothTime = 0.15f;
+    [SerializeField] private bool useInitialOffset = true;
+    [SerializeField] private Vector3 followOffset;
+
+    [Header("Shake")]
     public float basicDuration = 0.05f;
     public float basicStrength = 0.15f;
     public int basicVibration = 5;
-    
-    private Vector3 originalPos;
+
+    private Vector3 followPosition;
+    private Vector3 followVelocity;
+    private Vector3 shakeOffset;
     private Tween shakeTween;
 
     private void Awake()
     {
-        originalPos = transform.localPosition;
+        followPosition = transform.position;
+
+        if (followTarget != null && useInitialOffset)
+        {
+            followOffset = transform.position - followTarget.position;
+        }
     }
-    
+
+    private void LateUpdate()
+    {
+        if (followTarget != null)
+        {
+            Vector3 targetPosition = followTarget.position + followOffset;
+            followPosition = Vector3.SmoothDamp(
+                followPosition,
+                targetPosition,
+                ref followVelocity,
+                followSmoothTime
+            );
+        }
+        else
+        {
+            followPosition = transform.position - shakeOffset;
+        }
+
+        transform.position = followPosition + shakeOffset;
+    }
+
     public void PlayShake()
     {
-        // 기존 흔들림 제거 (중첩 방지)
         shakeTween?.Kill();
+        shakeOffset = Vector3.zero;
 
-        // 원래 위치 복구 보장
-        transform.localPosition = originalPos;
-
-        shakeTween = transform.DOShakePosition(
-            basicDuration,
-            basicStrength,
-            basicVibration,
-            randomness: 90,
-            snapping: false,
-            fadeOut: true
-        );
+        shakeTween = CreateShakeTween(basicDuration, basicStrength, basicVibration);
     }
 
     public void PlayShake(float duration, float strength, int vibrato)
     {
-        // 기존 흔들림 제거 (중첩 방지)
         shakeTween?.Kill();
+        shakeOffset = Vector3.zero;
 
-        // 원래 위치 복구 보장
-        transform.localPosition = originalPos;
+        shakeTween = CreateShakeTween(duration, strength, vibrato);
+    }
 
-        shakeTween = transform.DOShakePosition(
+    public void SetFollowTarget(Transform target)
+    {
+        followTarget = target;
+
+        if (followTarget != null && useInitialOffset)
+        {
+            followOffset = transform.position - shakeOffset - followTarget.position;
+        }
+    }
+
+    private Tween CreateShakeTween(float duration, float strength, int vibrato)
+    {
+        return DOTween.Shake(
+            () => shakeOffset,
+            value => shakeOffset = value,
             duration,
             strength,
             vibrato,
             randomness: 90,
-            snapping: false,
+            ignoreZAxis: true,
             fadeOut: true
-        );
+        ).OnComplete(() => shakeOffset = Vector3.zero);
     }
 }
