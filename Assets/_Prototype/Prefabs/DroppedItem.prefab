@@ -141,8 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16632f8240902044e8b5006fec6ffbf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DroppedItem
-  scatterDistance: 1
+  scatterMaxDistance: 1
+  scatterMinDistance: 0.6
   scatterDuration: 0.25
   pickupDelay: 0.4
-  magnetRange: 1
-  magnetSpeed: 15

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
@@ -14,39 +13,27 @@ public class DroppedItem : MonoBehaviour
     [SerializeField] private float pickupDelay = 0.5f;
 
     private bool canPickup = false;
-    
-    [SerializeField] private float magnetRange = 1f;
-    [SerializeField] private float magnetSpeed = 15f;
-    
-    [SerializeField] private float destroyRange = 0.1f;
 
-    private Transform player;
+    public bool CanPickup => canPickup;
 
     public void Init()
     {
-        player = FindAnyObjectByType<PlayerMovement>().transform;
-        
         StartCoroutine(ScatterRoutine());
         StartCoroutine(EnablePickupRoutine());
     }
 
-    private void Update()
+    public void MoveToward(Vector3 targetPosition, float speed)
     {
-        if (!canPickup || player == null) return;
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            targetPosition,
+            speed * Time.deltaTime
+        );
+    }
 
-        float dist = Vector2.Distance(transform.position, player.position);
-
-        if (dist < magnetRange)
-        {
-            transform.position = Vector3.MoveTowards(
-                transform.position,
-                player.position,
-                magnetSpeed * Time.deltaTime
-            );
-        }
-        
-        if (dist <= destroyRange) Destroy(gameObject);
-        
+    public void Collect()
+    {
+        Destroy(gameObject);
     }
 
     private IEnumerator ScatterRoutine()
