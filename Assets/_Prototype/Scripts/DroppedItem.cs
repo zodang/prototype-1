@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
 
 public class DroppedItem : MonoBehaviour
 {
+    public static event Action<DroppedItem> OnCollected;
+
     [Header("Scatter")]
     [SerializeField] private float scatterMaxDistance = 1f;
     [SerializeField] private float scatterMinDistance = 0.6f;
@@ -13,6 +16,7 @@ public class DroppedItem : MonoBehaviour
     [SerializeField] private float pickupDelay = 0.5f;
 
     private bool canPickup = false;
+    private bool hasCollected = false;
 
     public bool CanPickup => canPickup;
 
@@ -33,6 +37,13 @@ public class DroppedItem : MonoBehaviour
 
     public void Collect()
     {
+        if (hasCollected)
+        {
+            return;
+        }
+
+        hasCollected = true;
+        OnCollected?.Invoke(this);
         Destroy(gameObject);
     }
 
