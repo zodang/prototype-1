@@ -1,3 +1,4 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,10 +6,18 @@ using UnityEngine.UI;
 public class UpgradePanel : MonoBehaviour
 {
     [SerializeField] private ChainUpgradeSystem chainUpgradeSystem;
+    [SerializeField] private RectTransform upgradePanel;
+    [SerializeField] private Button foldBtn;
     [SerializeField] private Button branchUpgradeBtn;
     [SerializeField] private Button branchLuckyBtn;
     [SerializeField] private Button nodeUpgradeBtn;
     [SerializeField] private Button nodeLuckyBtn;
+
+    [Header("Fold UI")]
+    [SerializeField] private float unfoldedY = 0f;
+    [SerializeField] private float foldedY = -300f;
+    [SerializeField] private float foldDuration = 0.25f;
+    [SerializeField] private Ease foldEase = Ease.OutCubic;
 
     [Header("Branch UI")]
     [SerializeField] private TMP_Text branchCurrentText;
@@ -24,6 +33,14 @@ public class UpgradePanel : MonoBehaviour
     [SerializeField] private TMP_Text nodeUpgradeGemText;
     [SerializeField] private TMP_Text nodeLuckyGemText;
 
+    private bool isUnfolded;
+    private Tween foldTween;
+
+    private void OnValidate()
+    {
+        foldDuration = Mathf.Max(0f, foldDuration);
+    }
+
     private void Awake()
     {
         if (chainUpgradeSystem == null)
@@ -35,6 +52,11 @@ public class UpgradePanel : MonoBehaviour
         {
             chainUpgradeSystem = FindFirstObjectByType<ChainUpgradeSystem>();
         }
+
+        if (upgradePanel == null)
+        {
+            upgradePanel = GetComponent<RectTransform>();
+        }
     }
 
     private void OnEnable()
@@ -42,6 +64,11 @@ public class UpgradePanel : MonoBehaviour
         if (chainUpgradeSystem != null)
         {
             chainUpgradeSystem.OnUpgradeStateChanged += UpdateUI;
+        }
+
+        if (foldBtn != null)
+        {
+            foldBtn.onClick.AddListener(ToggleFold);
         }
 
         if (branchUpgradeBtn != null)
@@ -64,6 +91,11 @@ public class UpgradePanel : MonoBehaviour
             nodeLuckyBtn.onClick.AddListener(IncreaseNodeLuckChance);
         }
 
+        if (upgradePanel != null)
+        {
+            isUnfolded = Mathf.Approximately(upgradePanel.anchoredPosition.y, unfoldedY);
+        }
+
         UpdateUI();
     }
 
@@ -72,6 +104,11 @@ public class UpgradePanel : MonoBehaviour
         if (chainUpgradeSystem != null)
         {
             chainUpgradeSystem.OnUpgradeStateChanged -= UpdateUI;
+        }
+
+        if (foldBtn != null)
+        {
+            foldBtn.onClick.RemoveListener(ToggleFold);
         }
 
         if (branchUpgradeBtn != null)
@@ -93,6 +130,9 @@ public class UpgradePanel : MonoBehaviour
         {
             nodeLuckyBtn.onClick.RemoveListener(IncreaseNodeLuckChance);
         }
+
+        foldTween?.Kill();
+        foldTween = null;
     }
 
     private void UpgradeChainBranch()
@@ -125,6 +165,19 @@ public class UpgradePanel : MonoBehaviour
 
         chainUpgradeSystem.IncreaseNodeLuckChance();
         UpdateUI();
+    }
+
+    private void ToggleFold()
+    {
+        if (upgradePanel == null) return;
+
+        isUnfolded = !isUnfolded;
+        float targetY = isUnfolded ? unfoldedY : foldedY;
+
+        foldTween?.Kill();
+        foldTween = upgradePanel
+            .DOAnchorPosY(targetY, foldDuration)
+            .SetEase(foldEase);
     }
 
     private void UpdateUI()
