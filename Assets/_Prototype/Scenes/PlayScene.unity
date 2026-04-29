@@ -1988,7 +1988,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -70, y: -40}
+  m_AnchoredPosition: {x: 0, y: -40}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1178488307
@@ -2214,7 +2214,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1256929491
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3177,23 +3177,25 @@ MonoBehaviour:
   branchUpgrade:
     upgradeName: Branch
     currentLevel: 1
-    upgradeGemCost: 1
+    upgradeGemCost: 20
+    upgradeGemCostIncrease: 10
     luckGemCost: 1
     successChances:
-    - 0.8
     - 0.6
+    - 0.5
     - 0.4
-    - 0.2
+    - 0.3
   nodeUpgrade:
     upgradeName: Node
     currentLevel: 1
-    upgradeGemCost: 1
+    upgradeGemCost: 10
+    upgradeGemCostIncrease: 5
     luckGemCost: 1
     successChances:
-    - 0.8
     - 0.6
+    - 0.5
     - 0.4
-    - 0.2
+    - 0.3
   luckChanceIncreaseAmount: 0.03
 --- !u!4 &1485144145
 Transform:
@@ -4577,7 +4579,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2062122267
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4722,7 +4724,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -70, y: -40}
+  m_AnchoredPosition: {x: 0, y: -40}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2083139797

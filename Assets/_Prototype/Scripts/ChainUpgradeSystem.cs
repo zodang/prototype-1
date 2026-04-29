@@ -94,6 +94,7 @@ public class ChainUpgradeSystem : MonoBehaviour
             applyUpgrade?.Invoke();
         }
 
+        upgradeData.IncreaseUpgradeGemCost();
         OnUpgradeStateChanged?.Invoke();
         return upgraded;
     }
@@ -138,6 +139,7 @@ public class ChainUpgradeData
     [SerializeField] private string upgradeName;
     [SerializeField] private int currentLevel = 1;
     [SerializeField] private int upgradeGemCost = 1;
+    [SerializeField] private int upgradeGemCostIncrease = 1;
     [SerializeField] private int luckGemCost = 1;
     [SerializeField, Range(0f, 1f)] private List<float> successChances = new List<float> { 0.8f, 0.6f, 0.4f, 0.2f };
 
@@ -158,6 +160,7 @@ public class ChainUpgradeData
     {
         currentLevel = Mathf.Max(1, currentLevel);
         upgradeGemCost = Mathf.Max(0, upgradeGemCost);
+        upgradeGemCostIncrease = Mathf.Max(0, upgradeGemCostIncrease);
         luckGemCost = Mathf.Max(0, luckGemCost);
 
         for (int i = 0; i < successChances.Count; i++)
@@ -219,5 +222,13 @@ public class ChainUpgradeData
         successChances[chanceIndex] = nextChance;
         Debug.Log($"{upgradeName} chance increased. Chance: {previousChance:P0} -> {nextChance:P0}");
         return true;
+    }
+
+    public void IncreaseUpgradeGemCost()
+    {
+        if (upgradeGemCostIncrease <= 0) return;
+
+        upgradeGemCost += upgradeGemCostIncrease;
+        Debug.Log($"{upgradeName} upgrade cost increased. Cost: {upgradeGemCost}");
     }
 }
