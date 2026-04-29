@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float detectRange = 3f;
     [SerializeField] private float moveSpeed = 0.5f;
     [SerializeField] private float stopDistance = 0.2f;
+    [SerializeField] private float contactDamage = 5f;
 
     [SerializeField] private HPBar hpBar;
     [SerializeField] private DropManager dropManager;
@@ -17,6 +18,7 @@ public class Enemy : MonoBehaviour
     public bool IsLinked { get; private set; }
     public float MaxHp = 100;
     public float CurrentHp = 100;
+    public float ContactDamage => contactDamage;
     
     private SpriteRenderer _spriteRenderer;
     
@@ -34,6 +36,7 @@ public class Enemy : MonoBehaviour
         detectRange = Mathf.Max(0f, detectRange);
         moveSpeed = Mathf.Max(0f, moveSpeed);
         stopDistance = Mathf.Max(0f, stopDistance);
+        contactDamage = Mathf.Max(0f, contactDamage);
     }
 
     private void Awake()
@@ -88,6 +91,20 @@ public class Enemy : MonoBehaviour
         Instantiate(hitEffect, transform.position, Quaternion.identity);
         
         if (CurrentHp <= 0) Die();
+    }
+
+    public void DestroyByPlayerContact()
+    {
+        _squashTween?.Kill();
+        _colorTween?.Kill();
+
+        if (explosionEffect != null)
+        {
+            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        }
+
+        OnDeath?.Invoke(this);
+        Destroy(gameObject);
     }
 
     public void IsDetected(bool isDetected)

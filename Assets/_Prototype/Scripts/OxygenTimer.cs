@@ -1,88 +1,113 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class OxygenTimer : MonoBehaviour
+public class PlayerHp : MonoBehaviour
 {
-    [SerializeField] private float duration = 30f;
-    [SerializeField] private bool startOnPlay = true;
+    [FormerlySerializedAs("duration")]
+    [SerializeField] private float maxHp = 30f;
 
-    private float remainingTime;
+    private readonly HashSet<Enemy> damagedEnemies = new HashSet<Enemy>();
+
+    private float currentHp;
     private bool hasEnded;
 
-    public event Action OnOxygenEnded;
-    public event Action<float, float> OnOxygenChanged;
+    public event Action OnHpEnded;
+    public event Action<float, float> OnHpChanged;
 
-    public float Duration => duration;
-    public float RemainingTime => remainingTime;
-    public float NormalizedRemainingTime => duration <= 0f ? 0f : Mathf.Clamp01(remainingTime / duration);
-    public bool IsRunning { get; private set; }
+    public float MaxHp => maxHp;
+    public float CurrentHp => currentHp;
+    public float NormalizedHp => maxHp <= 0f ? 0f : Mathf.Clamp01(currentHp / maxHp);
+    public bool IsAlive => !hasEnded;
+
+    private void OnValidate()
+    {
+        maxHp = Mathf.Max(0f, maxHp);
+    }
 
     private void Awake()
     {
-        remainingTime = Mathf.Max(0f, duration);
+        ResetHp();
     }
 
-    private void Start()
+    private void OnDisable()
     {
-        if (startOnPlay)
+        damagedEnemies.Clear();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        TryTakeDamageFrom(collision.collider);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        TryTakeDamageFrom(collision.collider);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        TryTakeDamageFrom(other);
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        TryTakeDamageFrom(other);
+    }
+
+    public void ResetHp()
+    {
+        currentHp = Mathf.Max(0f, maxHp);
+        hasEnded = currentHp <= 0f;
+        damagedEnemies.Clear();
+        OnHpChanged?.Invoke(currentHp, maxHp);
+
+        if (hasEnded)
         {
-            StartTimer();
+            OnHpEnded?.Invoke();
         }
     }
 
-    private void Update()
+    public void ReduceHp(float amount)
     {
-        if (!IsRunning)
+        if (hasEnded || amount <= 0f)
         {
             return;
         }
 
-        remainingTime = Mathf.Max(0f, remainingTime - Time.deltaTime);
-        OnOxygenChanged?.Invoke(remainingTime, duration);
+        currentHp = Mathf.Max(0f, currentHp - amount);
+        OnHpChanged?.Invoke(currentHp, maxHp);
 
-        if (remainingTime <= 0f)
+        if (currentHp <= 0f)
         {
-            EndTimer();
+            EndHp();
         }
     }
 
-    public void StartTimer()
+    private void TryTakeDamageFrom(Collider2D other)
     {
-        remainingTime = Mathf.Max(0f, duration);
-        hasEnded = false;
-        IsRunning = true;
-        OnOxygenChanged?.Invoke(remainingTime, duration);
-
-        if (remainingTime <= 0f)
+        Enemy enemy = other.GetComponentInParent<Enemy>();
+        if (hasEnded || enemy == null || damagedEnemies.Contains(enemy))
         {
-            EndTimer();
+            return;
         }
+
+        damagedEnemies.Add(enemy);
+        ReduceHp(enemy.ContactDamage);
+        enemy.DestroyByPlayerContact();
     }
 
-    public void StopTimer()
-    {
-        IsRunning = false;
-    }
-
-    public void SetDuration(float seconds)
-    {
-        duration = Mathf.Max(0f, seconds);
-        remainingTime = Mathf.Min(remainingTime, duration);
-        OnOxygenChanged?.Invoke(remainingTime, duration);
-    }
-
-    private void EndTimer()
+    private void EndHp()
     {
         if (hasEnded)
         {
             return;
         }
 
-        remainingTime = 0f;
+        currentHp = 0f;
         hasEnded = true;
-        IsRunning = false;
 
-        OnOxygenEnded?.Invoke();
-        OnOxygenEnded?.Invoke();
+        OnHpEnded?.Invoke();
     }
 }

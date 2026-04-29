@@ -2888,52 +2888,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1256929490}
   m_CullTransparentMesh: 1
---- !u!1 &1283188283
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1283188285}
-  - component: {fileID: 1283188284}
-  m_Layer: 0
-  m_Name: OxgenTimer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1283188284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1283188283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4976e63e721caa849a534d885125a11c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OxygenTimer
-  duration: 90
-  startOnPlay: 1
---- !u!4 &1283188285
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1283188283}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1379054522
 GameObject:
   m_ObjectHideFlags: 0
@@ -3082,11 +3036,14 @@ GameObject:
   - component: {fileID: 1398753569}
   - component: {fileID: 1398753572}
   - component: {fileID: 1398753570}
+  - component: {fileID: 1398753578}
+  - component: {fileID: 1398753577}
+  - component: {fileID: 1398753575}
   - component: {fileID: 1398753571}
   - component: {fileID: 1398753573}
   - component: {fileID: 1398753574}
   - component: {fileID: 1398753576}
-  - component: {fileID: 1398753575}
+  - component: {fileID: 1398753579}
   m_Layer: 0
   m_Name: Buddie
   m_TagString: Player
@@ -3217,7 +3174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimation
   inputManager: {fileID: 240833237}
-  playerAttack: {fileID: 0}
+  playerAttack: {fileID: 1398753574}
 --- !u!114 &1398753574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3368,6 +3325,92 @@ MonoBehaviour:
   magnetSpeed: 15
   collectRange: 0.1
   maxDetectedItems: 32
+--- !u!61 &1398753577
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398753564}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.75, y: 0.53}
+    newSize: {x: 0.38, y: 0.47}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.3, y: 0.4}
+  m_EdgeRadius: 0
+--- !u!50 &1398753578
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398753564}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &1398753579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1398753564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4976e63e721caa849a534d885125a11c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OxygenTimer
+  maxHp: 30
 --- !u!1 &1406903556
 GameObject:
   m_ObjectHideFlags: 0
@@ -3794,7 +3837,7 @@ GameObject:
   - component: {fileID: 1519336057}
   - component: {fileID: 1519336059}
   m_Layer: 5
-  m_Name: OxgenFillImg
+  m_Name: HpFillImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3869,7 +3912,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d1e39e7c5b64f6a9b2f43c180a7d52e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OxygenFillUI
-  oxygenTimer: {fileID: 1283188284}
+  hpTimer: {fileID: 1398753579}
   fillUI: {fileID: 1519336057}
 --- !u!1 &1580582768
 GameObject:
@@ -5541,7 +5584,6 @@ SceneRoots:
   - {fileID: 240833239}
   - {fileID: 212404081}
   - {fileID: 650972120}
-  - {fileID: 1283188285}
   - {fileID: 1398753569}
   - {fileID: 1442819464}
   - {fileID: 1188758928}

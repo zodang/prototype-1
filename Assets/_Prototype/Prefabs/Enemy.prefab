@@ -201,6 +201,7 @@ MonoBehaviour:
   detectRange: 5
   moveSpeed: 0.3
   stopDistance: 0.2
+  contactDamage: 5
   hpBar: {fileID: 8406846667652497830}
   dropManager: {fileID: 0}
   hitEffect: {fileID: 7533640825595509265, guid: 99699cb4afe15364eb3671a29030afc0, type: 3}
@@ -237,7 +238,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0

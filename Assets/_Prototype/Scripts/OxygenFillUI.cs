@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OxygenFillUI : MonoBehaviour
+public class HpFillUI : MonoBehaviour
 {
-    [SerializeField] private OxygenTimer oxygenTimer;
+    [SerializeField] private PlayerHp hpTimer;
     [SerializeField] private Image fillUI;
 
     private void Awake()
@@ -16,55 +16,55 @@ public class OxygenFillUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (oxygenTimer == null)
+        if (hpTimer == null)
         {
             return;
         }
 
-        oxygenTimer.OnOxygenChanged += HandleOxygenChanged;
+        hpTimer.OnHpChanged += HandleHpChanged;
         UpdateFill();
     }
 
     private void OnDisable()
     {
-        if (oxygenTimer == null)
+        if (hpTimer == null)
         {
             return;
         }
 
-        oxygenTimer.OnOxygenChanged -= HandleOxygenChanged;
+        hpTimer.OnHpChanged -= HandleHpChanged;
     }
 
-    public void SetTimer(OxygenTimer timer)
+    public void SetTimer(PlayerHp timer)
     {
-        if (oxygenTimer != null)
+        if (hpTimer != null)
         {
-            oxygenTimer.OnOxygenChanged -= HandleOxygenChanged;
+            hpTimer.OnHpChanged -= HandleHpChanged;
         }
 
-        oxygenTimer = timer;
+        hpTimer = timer;
 
-        if (isActiveAndEnabled && oxygenTimer != null)
+        if (isActiveAndEnabled && hpTimer != null)
         {
-            oxygenTimer.OnOxygenChanged += HandleOxygenChanged;
+            hpTimer.OnHpChanged += HandleHpChanged;
         }
 
         UpdateFill();
     }
 
-    private void HandleOxygenChanged(float remainingTime, float duration)
+    private void HandleHpChanged(float currentHp, float maxHp)
     {
-        SetFill(duration <= 0f ? 0f : remainingTime / duration);
+        SetFill(maxHp <= 0f ? 0f : currentHp / maxHp);
     }
 
     private void UpdateFill()
     {
-        if (oxygenTimer == null)
+        if (hpTimer == null)
         {
             return;
         }
 
-        SetFill(oxygenTimer.NormalizedRemainingTime);
+        SetFill(hpTimer.NormalizedHp);
     }
 
     private void SetFill(float ratio)
