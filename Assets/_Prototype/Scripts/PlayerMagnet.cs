@@ -26,16 +26,45 @@ public class PlayerMagnet : MonoBehaviour
             if (itemCollider == null) continue;
 
             DroppedCoin coin = itemCollider.GetComponent<DroppedCoin>();
-            if (coin == null || !coin.CanPickup) continue;
-
-            float distance = Vector2.Distance(transform.position, coin.transform.position);
-            if (distance <= collectRange)
+            if (coin != null)
             {
-                coin.Collect();
+                MoveOrCollectCoin(coin);
                 continue;
             }
 
-            coin.MoveToward(transform.position, magnetSpeed);
+            DroppedGem gem = itemCollider.GetComponent<DroppedGem>();
+            if (gem != null)
+            {
+                MoveOrCollectGem(gem);
+            }
         }
+    }
+
+    private void MoveOrCollectCoin(DroppedCoin coin)
+    {
+        if (!coin.CanPickup) return;
+
+        float distance = Vector2.Distance(transform.position, coin.transform.position);
+        if (distance <= collectRange)
+        {
+            coin.Collect();
+            return;
+        }
+
+        coin.MoveToward(transform.position, magnetSpeed);
+    }
+
+    private void MoveOrCollectGem(DroppedGem gem)
+    {
+        if (!gem.CanPickup) return;
+
+        float distance = Vector2.Distance(transform.position, gem.transform.position);
+        if (distance <= collectRange)
+        {
+            gem.Collect();
+            return;
+        }
+
+        gem.MoveToward(transform.position, magnetSpeed);
     }
 }

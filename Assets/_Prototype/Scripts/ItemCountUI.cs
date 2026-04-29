@@ -4,17 +4,22 @@ using UnityEngine.Serialization;
 
 public class ItemCountUI : MonoBehaviour
 {
+    private enum ItemType
+    {
+        Coin,
+        Gem
+    }
+
+    [SerializeField] private ItemType itemType = ItemType.Coin;
     [FormerlySerializedAs("gemManager")]
     [SerializeField] private CoinManager coinManager;
+    [SerializeField] private GemManager gemManager;
     [SerializeField] private TMP_Text countText;
 
     private void Awake()
     {
-        if (coinManager == null)
-        {
-            coinManager = FindFirstObjectByType<CoinManager>();
-        }
-
+        FindMissingManager();
+        
         if (countText == null)
         {
             countText = GetComponent<TMP_Text>();
@@ -23,22 +28,34 @@ public class ItemCountUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (coinManager == null)
+        FindMissingManager();
+
+        if (itemType == ItemType.Coin)
         {
-            coinManager = FindFirstObjectByType<CoinManager>();
+            if (coinManager == null) return;
+
+            coinManager.OnCoinCountChanged += UpdateCount;
+            UpdateCount(coinManager.CoinCount);
+            return;
         }
 
-        if (coinManager == null) return;
+        if (gemManager == null) return;
 
-        coinManager.OnCoinCountChanged += UpdateCount;
-        UpdateCount(coinManager.CoinCount);
+        gemManager.OnGemCountChanged += UpdateCount;
+        UpdateCount(gemManager.GemCount);
     }
 
     private void OnDisable()
     {
-        if (coinManager == null) return;
+        if (coinManager != null)
+        {
+            coinManager.OnCoinCountChanged -= UpdateCount;
+        }
 
-        coinManager.OnCoinCountChanged -= UpdateCount;
+        if (gemManager != null)
+        {
+            gemManager.OnGemCountChanged -= UpdateCount;
+        }
     }
 
     private void UpdateCount(int count)
@@ -46,6 +63,18 @@ public class ItemCountUI : MonoBehaviour
         if (countText != null)
         {
             countText.text = count.ToString();
+        }
+    }
+
+    private void FindMissingManager()
+    {
+        if (itemType == ItemType.Coin && coinManager == null)
+        {
+            coinManager = FindFirstObjectByType<CoinManager>();
+        }
+        else if (itemType == ItemType.Gem && gemManager == null)
+        {
+            gemManager = FindFirstObjectByType<GemManager>();
         }
     }
 }
