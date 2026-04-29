@@ -1,15 +1,18 @@
 using TMPro;
 using UnityEngine;
 
-public class GemCountUI : MonoBehaviour
+public class ItemCountUI : MonoBehaviour
 {
+    [SerializeField] private GemManager gemManager;
     [SerializeField] private TMP_Text countText;
-    [SerializeField] private int initialCount = 0;
-
-    private int count;
 
     private void Awake()
     {
+        if (gemManager == null)
+        {
+            gemManager = FindFirstObjectByType<GemManager>();
+        }
+
         if (countText == null)
         {
             countText = GetComponent<TMP_Text>();
@@ -18,24 +21,26 @@ public class GemCountUI : MonoBehaviour
 
     private void OnEnable()
     {
-        DroppedGem.OnCollected += HandleGemCollected;
-        SetCount(initialCount);
+        if (gemManager == null)
+        {
+            gemManager = FindFirstObjectByType<GemManager>();
+        }
+
+        if (gemManager == null) return;
+
+        gemManager.OnGemCountChanged += UpdateCount;
+        UpdateCount(gemManager.GemCount);
     }
 
     private void OnDisable()
     {
-        DroppedGem.OnCollected -= HandleGemCollected;
+        if (gemManager == null) return;
+
+        gemManager.OnGemCountChanged -= UpdateCount;
     }
 
-    private void HandleGemCollected(DroppedGem gem)
+    private void UpdateCount(int count)
     {
-        SetCount(count + 1);
-    }
-
-    private void SetCount(int value)
-    {
-        count = Mathf.Max(0, value);
-
         if (countText != null)
         {
             countText.text = count.ToString();

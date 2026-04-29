@@ -530,8 +530,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0bdb54494bf400489f3bcdee65859ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemCountUI
+  gemManager: {fileID: 0}
   countText: {fileID: 47328264}
-  initialCount: 0
 --- !u!1 &212404077
 GameObject:
   m_ObjectHideFlags: 0
@@ -2100,6 +2100,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1178488305}
   m_CullTransparentMesh: 1
+--- !u!1 &1188758926
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1188758928}
+  - component: {fileID: 1188758927}
+  m_Layer: 0
+  m_Name: GemManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1188758927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188758926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60693da905a84e71a1825fb9a46d8d28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GemManager
+  initialGemCount: 0
+--- !u!4 &1188758928
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188758926}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1222322027
 GameObject:
   m_ObjectHideFlags: 0
@@ -4812,3 +4857,4 @@ SceneRoots:
   - {fileID: 1283188285}
   - {fileID: 1398753569}
   - {fileID: 1442819464}
+  - {fileID: 1188758928}
