@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   player: {fileID: 0}
-  detectRange: 4
+  detectRange: 5
   moveSpeed: 0.3
   stopDistance: 0.2
   hpBar: {fileID: 8406846667652497830}

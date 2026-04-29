@@ -53,6 +53,11 @@ public class Enemy : MonoBehaviour
                 player = playerMovement.transform;
             }
         }
+
+        if (dropManager == null)
+        {
+            dropManager = FindFirstObjectByType<DropManager>();
+        }
         
         CurrentHp = MaxHp;
     }
