@@ -1303,7 +1303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30691a877234f844dad08ede50a4c697, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropManager
-  itemPrefab: {fileID: -7322692313472514704, guid: be64c65740a09434e9d48f154a3b249b, type: 3}
+  droppedGemPrefab: {fileID: -7322692313472514704, guid: be64c65740a09434e9d48f154a3b249b, type: 3}
   minDropCount: 3
   maxDropCount: 6
 --- !u!4 &650972120
@@ -1452,7 +1452,7 @@ MonoBehaviour:
     - 0.6
     - 0.4
     - 0.2
-  luckChanceIncreaseAmount: 0.1
+  luckChanceIncreaseAmount: 0.03
 --- !u!1 &891144763
 GameObject:
   m_ObjectHideFlags: 0

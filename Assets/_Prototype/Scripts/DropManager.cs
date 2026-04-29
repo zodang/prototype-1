@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DropManager : MonoBehaviour
 {
-    [SerializeField] private DroppedItem itemPrefab;
+    [SerializeField] private DroppedGem droppedGemPrefab;
 
     public int minDropCount = 3;
     public int maxDropCount = 6;
@@ -13,8 +13,8 @@ public class DropManager : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            DroppedItem item = Instantiate(itemPrefab, position, Quaternion.identity);
-            item.Init();
+            DroppedGem gem = Instantiate(droppedGemPrefab, position, Quaternion.identity);
+            gem.Init();
         }
     }
 }

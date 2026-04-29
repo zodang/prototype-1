@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class ItemCountUI : MonoBehaviour
+public class GemCountUI : MonoBehaviour
 {
     [SerializeField] private TMP_Text countText;
     [SerializeField] private int initialCount = 0;
@@ -18,16 +18,16 @@ public class ItemCountUI : MonoBehaviour
 
     private void OnEnable()
     {
-        DroppedItem.OnCollected += HandleItemCollected;
+        DroppedGem.OnCollected += HandleGemCollected;
         SetCount(initialCount);
     }
 
     private void OnDisable()
     {
-        DroppedItem.OnCollected -= HandleItemCollected;
+        DroppedGem.OnCollected -= HandleGemCollected;
     }
 
-    private void HandleItemCollected(DroppedItem item)
+    private void HandleGemCollected(DroppedGem gem)
     {
         SetCount(count + 1);
     }
