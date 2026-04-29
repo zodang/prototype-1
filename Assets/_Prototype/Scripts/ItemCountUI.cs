@@ -1,16 +1,18 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ItemCountUI : MonoBehaviour
 {
-    [SerializeField] private GemManager gemManager;
+    [FormerlySerializedAs("gemManager")]
+    [SerializeField] private CoinManager coinManager;
     [SerializeField] private TMP_Text countText;
 
     private void Awake()
     {
-        if (gemManager == null)
+        if (coinManager == null)
         {
-            gemManager = FindFirstObjectByType<GemManager>();
+            coinManager = FindFirstObjectByType<CoinManager>();
         }
 
         if (countText == null)
@@ -21,22 +23,22 @@ public class ItemCountUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (gemManager == null)
+        if (coinManager == null)
         {
-            gemManager = FindFirstObjectByType<GemManager>();
+            coinManager = FindFirstObjectByType<CoinManager>();
         }
 
-        if (gemManager == null) return;
+        if (coinManager == null) return;
 
-        gemManager.OnGemCountChanged += UpdateCount;
-        UpdateCount(gemManager.GemCount);
+        coinManager.OnCoinCountChanged += UpdateCount;
+        UpdateCount(coinManager.CoinCount);
     }
 
     private void OnDisable()
     {
-        if (gemManager == null) return;
+        if (coinManager == null) return;
 
-        gemManager.OnGemCountChanged -= UpdateCount;
+        coinManager.OnCoinCountChanged -= UpdateCount;
     }
 
     private void UpdateCount(int count)

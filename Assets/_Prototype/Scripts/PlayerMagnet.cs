@@ -25,17 +25,17 @@ public class PlayerMagnet : MonoBehaviour
             Collider2D itemCollider = detectedItems[i];
             if (itemCollider == null) continue;
 
-            DroppedGem gem = itemCollider.GetComponent<DroppedGem>();
-            if (gem == null || !gem.CanPickup) continue;
+            DroppedCoin coin = itemCollider.GetComponent<DroppedCoin>();
+            if (coin == null || !coin.CanPickup) continue;
 
-            float distance = Vector2.Distance(transform.position, gem.transform.position);
+            float distance = Vector2.Distance(transform.position, coin.transform.position);
             if (distance <= collectRange)
             {
-                gem.Collect();
+                coin.Collect();
                 continue;
             }
 
-            gem.MoveToward(transform.position, magnetSpeed);
+            coin.MoveToward(transform.position, magnetSpeed);
         }
     }
 }

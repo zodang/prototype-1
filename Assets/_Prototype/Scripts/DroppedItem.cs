@@ -3,9 +3,9 @@ using UnityEngine;
 using System.Collections;
 using Random = UnityEngine.Random;
 
-public class DroppedGem : MonoBehaviour
+public class DroppedCoin : MonoBehaviour
 {
-    public static event Action<DroppedGem> OnCollected;
+    public static event Action<DroppedCoin> OnCollected;
 
     [Header("Scatter")]
     [SerializeField] private float scatterMaxDistance = 1f;

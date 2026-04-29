@@ -1,6 +1,7 @@
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UpgradePanel : MonoBehaviour
@@ -23,15 +24,19 @@ public class UpgradePanel : MonoBehaviour
     [SerializeField] private TMP_Text branchCurrentText;
     [SerializeField] private TMP_Text branchMaxText;
     [SerializeField] private TMP_Text branchPercentText;
-    [SerializeField] private TMP_Text branchUpgradeGemText;
-    [SerializeField] private TMP_Text branchLuckyGemText;
+    [FormerlySerializedAs("branchUpgradeGemText")]
+    [SerializeField] private TMP_Text branchUpgradeCoinText;
+    [FormerlySerializedAs("branchLuckyGemText")]
+    [SerializeField] private TMP_Text branchLuckyCoinText;
 
     [Header("Node UI")]
     [SerializeField] private TMP_Text nodeCurrentText;
     [SerializeField] private TMP_Text nodeMaxText;
     [SerializeField] private TMP_Text nodePercentText;
-    [SerializeField] private TMP_Text nodeUpgradeGemText;
-    [SerializeField] private TMP_Text nodeLuckyGemText;
+    [FormerlySerializedAs("nodeUpgradeGemText")]
+    [SerializeField] private TMP_Text nodeUpgradeCoinText;
+    [FormerlySerializedAs("nodeLuckyGemText")]
+    [SerializeField] private TMP_Text nodeLuckyCoinText;
 
     private bool isUnfolded;
     private Tween foldTween;
@@ -221,8 +226,8 @@ public class UpgradePanel : MonoBehaviour
             chainUpgradeSystem.BranchMaxLevel,
             chainUpgradeSystem.BranchCurrentSuccessChance);
 
-        UpdateGemCostText(branchUpgradeGemText, chainUpgradeSystem.BranchUpgradeGemCost);
-        UpdateGemCostText(branchLuckyGemText, chainUpgradeSystem.BranchLuckGemCost);
+        UpdateCoinCostText(branchUpgradeCoinText, chainUpgradeSystem.BranchUpgradeCoinCost);
+        UpdateCoinCostText(branchLuckyCoinText, chainUpgradeSystem.BranchLuckCoinCost);
 
         UpdateUpgradeTexts(
             nodeCurrentText,
@@ -232,8 +237,8 @@ public class UpgradePanel : MonoBehaviour
             chainUpgradeSystem.NodeMaxLevel,
             chainUpgradeSystem.NodeCurrentSuccessChance);
 
-        UpdateGemCostText(nodeUpgradeGemText, chainUpgradeSystem.NodeUpgradeGemCost);
-        UpdateGemCostText(nodeLuckyGemText, chainUpgradeSystem.NodeLuckGemCost);
+        UpdateCoinCostText(nodeUpgradeCoinText, chainUpgradeSystem.NodeUpgradeCoinCost);
+        UpdateCoinCostText(nodeLuckyCoinText, chainUpgradeSystem.NodeLuckCoinCost);
     }
 
     private void UpdateUpgradeTexts(TMP_Text currentText, TMP_Text maxText, TMP_Text percentText, int currentLevel, int maxLevel, float successChance)
@@ -254,11 +259,11 @@ public class UpgradePanel : MonoBehaviour
         }
     }
 
-    private void UpdateGemCostText(TMP_Text gemText, int gemCost)
+    private void UpdateCoinCostText(TMP_Text coinText, int coinCost)
     {
-        if (gemText != null)
+        if (coinText != null)
         {
-            gemText.text = gemCost.ToString();
+            coinText.text = coinCost.ToString();
         }
     }
 }
