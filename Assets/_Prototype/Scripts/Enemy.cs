@@ -1,10 +1,15 @@
 using System;
 using DG.Tweening;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("Chase")]
+    [SerializeField] private Transform player;
+    [SerializeField] private float detectRange = 3f;
+    [SerializeField] private float moveSpeed = 0.5f;
+    [SerializeField] private float stopDistance = 0.2f;
+
     [SerializeField] private HPBar hpBar;
     [SerializeField] private DropManager dropManager;
     [SerializeField] private ExplosionEffect hitEffect;
@@ -23,15 +28,38 @@ public class Enemy : MonoBehaviour
     private Color _originalColor;
     private Tween _squashTween;
     private Tween _colorTween;
+
+    private void OnValidate()
+    {
+        detectRange = Mathf.Max(0f, detectRange);
+        moveSpeed = Mathf.Max(0f, moveSpeed);
+        stopDistance = Mathf.Max(0f, stopDistance);
+    }
+
+    private void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _originalScale = transform.localScale;
+        _originalColor = _spriteRenderer.color;
+    }
     
     private void Start()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
+        if (player == null)
+        {
+            PlayerMovement playerMovement = FindFirstObjectByType<PlayerMovement>();
+            if (playerMovement != null)
+            {
+                player = playerMovement.transform;
+            }
+        }
         
-        _originalScale = transform.localScale;
-        _originalColor = _spriteRenderer.color;
-
         CurrentHp = MaxHp;
+    }
+
+    private void Update()
+    {
+        ChasePlayerInRange();
     }
 
     public void Register()
@@ -60,6 +88,24 @@ public class Enemy : MonoBehaviour
     public void IsDetected(bool isDetected)
     {
         _spriteRenderer.color = isDetected ? Color.green : Color.white;
+    }
+
+    private void ChasePlayerInRange()
+    {
+        if (player == null || moveSpeed <= 0f) return;
+
+        Vector2 currentPosition = transform.position;
+        Vector2 targetPosition = player.position;
+        float distance = Vector2.Distance(currentPosition, targetPosition);
+
+        if (distance > detectRange || distance <= stopDistance) return;
+
+        Vector2 nextPosition = Vector2.MoveTowards(
+            currentPosition,
+            targetPosition,
+            moveSpeed * Time.deltaTime);
+
+        transform.position = new Vector3(nextPosition.x, nextPosition.y, transform.position.z);
     }
 
     private void PlaySquash()
