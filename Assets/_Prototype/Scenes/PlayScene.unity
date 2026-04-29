@@ -1333,7 +1333,6 @@ GameObject:
   - component: {fileID: 844291274}
   - component: {fileID: 844291273}
   - component: {fileID: 844291275}
-  - component: {fileID: 844291276}
   m_Layer: 5
   m_Name: UpgradePanel
   m_TagString: Untagged
@@ -1412,7 +1411,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd7cb934954e87c4b92c507af3bb2e2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UpgradePanel
-  chainUpgradeSystem: {fileID: 844291276}
+  chainUpgradeSystem: {fileID: 1485144144}
   branchUpgradeBtn: {fileID: 1178488307}
   branchLuckyBtn: {fileID: 1256929492}
   nodeUpgradeBtn: {fileID: 2083139797}
@@ -1420,39 +1419,13 @@ MonoBehaviour:
   branchCurrentText: {fileID: 1762677259}
   branchMaxText: {fileID: 1760364566}
   branchPercentText: {fileID: 1895639212}
+  branchUpgradeGemText: {fileID: 934210043}
+  branchLuckyGemText: {fileID: 468734016}
   nodeCurrentText: {fileID: 1609415826}
   nodeMaxText: {fileID: 560395232}
   nodePercentText: {fileID: 1379054524}
---- !u!114 &844291276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 844291271}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4c85d361f3f4414aaef5ad75b7085ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChainUpgradeSystem
-  playerAttack: {fileID: 1398753574}
-  branchUpgrade:
-    upgradeName: Branch
-    currentLevel: 1
-    successChances:
-    - 0.8
-    - 0.6
-    - 0.4
-    - 0.2
-  nodeUpgrade:
-    upgradeName: Node
-    currentLevel: 1
-    successChances:
-    - 0.8
-    - 0.6
-    - 0.4
-    - 0.2
-  luckChanceIncreaseAmount: 0.03
+  nodeUpgradeGemText: {fileID: 1472109391}
+  nodeLuckyGemText: {fileID: 481387508}
 --- !u!1 &891144763
 GameObject:
   m_ObjectHideFlags: 0
@@ -3170,6 +3143,73 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1472109389}
   m_CullTransparentMesh: 1
+--- !u!1 &1485144143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1485144145}
+  - component: {fileID: 1485144144}
+  m_Layer: 0
+  m_Name: ChainUpgradeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1485144144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485144143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4c85d361f3f4414aaef5ad75b7085ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChainUpgradeSystem
+  playerAttack: {fileID: 1398753574}
+  gemManager: {fileID: 1188758927}
+  branchUpgrade:
+    upgradeName: Branch
+    currentLevel: 1
+    upgradeGemCost: 1
+    luckGemCost: 1
+    successChances:
+    - 0.8
+    - 0.6
+    - 0.4
+    - 0.2
+  nodeUpgrade:
+    upgradeName: Node
+    currentLevel: 1
+    upgradeGemCost: 1
+    luckGemCost: 1
+    successChances:
+    - 0.8
+    - 0.6
+    - 0.4
+    - 0.2
+  luckChanceIncreaseAmount: 0.03
+--- !u!4 &1485144145
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1485144143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1519336055
 GameObject:
   m_ObjectHideFlags: 0
@@ -4858,3 +4898,4 @@ SceneRoots:
   - {fileID: 1398753569}
   - {fileID: 1442819464}
   - {fileID: 1188758928}
+  - {fileID: 1485144145}

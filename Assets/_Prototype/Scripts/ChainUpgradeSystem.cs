@@ -5,20 +5,25 @@ using UnityEngine;
 public class ChainUpgradeSystem : MonoBehaviour
 {
     [SerializeField] private PlayerAttack playerAttack;
+    [SerializeField] private GemManager gemManager;
     [SerializeField] private ChainUpgradeData branchUpgrade = new ChainUpgradeData("Branch");
     [SerializeField] private ChainUpgradeData nodeUpgrade = new ChainUpgradeData("Node");
     [SerializeField, Range(0f, 1f)] private float luckChanceIncreaseAmount = 0.1f;
 
-    public bool CanUpgradeBranch => branchUpgrade.CanUpgrade;
-    public bool CanUpgradeNode => nodeUpgrade.CanUpgrade;
-    public bool CanIncreaseBranchLuck => branchUpgrade.CanIncreaseCurrentSuccessChance;
-    public bool CanIncreaseNodeLuck => nodeUpgrade.CanIncreaseCurrentSuccessChance;
+    public bool CanUpgradeBranch => branchUpgrade.CanUpgrade && CanUseGems(branchUpgrade.UpgradeGemCost);
+    public bool CanUpgradeNode => nodeUpgrade.CanUpgrade && CanUseGems(nodeUpgrade.UpgradeGemCost);
+    public bool CanIncreaseBranchLuck => branchUpgrade.CanIncreaseCurrentSuccessChance && CanUseGems(branchUpgrade.LuckGemCost);
+    public bool CanIncreaseNodeLuck => nodeUpgrade.CanIncreaseCurrentSuccessChance && CanUseGems(nodeUpgrade.LuckGemCost);
     public int BranchCurrentLevel => branchUpgrade.CurrentLevel;
     public int BranchMaxLevel => branchUpgrade.MaxLevel;
     public float BranchCurrentSuccessChance => branchUpgrade.CurrentSuccessChance;
+    public int BranchUpgradeGemCost => branchUpgrade.UpgradeGemCost;
+    public int BranchLuckGemCost => branchUpgrade.LuckGemCost;
     public int NodeCurrentLevel => nodeUpgrade.CurrentLevel;
     public int NodeMaxLevel => nodeUpgrade.MaxLevel;
     public float NodeCurrentSuccessChance => nodeUpgrade.CurrentSuccessChance;
+    public int NodeUpgradeGemCost => nodeUpgrade.UpgradeGemCost;
+    public int NodeLuckGemCost => nodeUpgrade.LuckGemCost;
     public event Action OnUpgradeStateChanged;
 
     private void OnValidate()
@@ -33,6 +38,27 @@ public class ChainUpgradeSystem : MonoBehaviour
         if (playerAttack == null)
         {
             playerAttack = FindFirstObjectByType<PlayerAttack>();
+        }
+
+        if (gemManager == null)
+        {
+            gemManager = FindFirstObjectByType<GemManager>();
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (gemManager != null)
+        {
+            gemManager.OnGemCountChanged += HandleGemCountChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (gemManager != null)
+        {
+            gemManager.OnGemCountChanged -= HandleGemCountChanged;
         }
     }
 
@@ -59,6 +85,8 @@ public class ChainUpgradeSystem : MonoBehaviour
     private bool TryUpgrade(ChainUpgradeData upgradeData, Action applyUpgrade)
     {
         if (playerAttack == null) return false;
+        if (!upgradeData.CanUpgrade) return false;
+        if (!TryUseGems(upgradeData.UpgradeGemCost)) return false;
 
         bool upgraded = upgradeData.TryUpgrade();
         if (upgraded)
@@ -72,9 +100,35 @@ public class ChainUpgradeSystem : MonoBehaviour
 
     private bool IncreaseLuckChance(ChainUpgradeData upgradeData)
     {
+        if (!upgradeData.CanIncreaseCurrentSuccessChance) return false;
+        if (!TryUseGems(upgradeData.LuckGemCost)) return false;
+
         bool increased = upgradeData.IncreaseCurrentSuccessChance(luckChanceIncreaseAmount);
         OnUpgradeStateChanged?.Invoke();
         return increased;
+    }
+
+    private bool CanUseGems(int amount)
+    {
+        return gemManager != null && gemManager.CanUseGems(amount);
+    }
+
+    private bool TryUseGems(int amount)
+    {
+        if (gemManager == null) return false;
+
+        bool used = gemManager.TryUseGems(amount);
+        if (!used)
+        {
+            Debug.Log($"Not enough gems. Required: {amount}, Current: {gemManager.GemCount}");
+        }
+
+        return used;
+    }
+
+    private void HandleGemCountChanged(int gemCount)
+    {
+        OnUpgradeStateChanged?.Invoke();
     }
 }
 
@@ -83,6 +137,8 @@ public class ChainUpgradeData
 {
     [SerializeField] private string upgradeName;
     [SerializeField] private int currentLevel = 1;
+    [SerializeField] private int upgradeGemCost = 1;
+    [SerializeField] private int luckGemCost = 1;
     [SerializeField, Range(0f, 1f)] private List<float> successChances = new List<float> { 0.8f, 0.6f, 0.4f, 0.2f };
 
     public bool CanUpgrade => currentLevel < MaxLevel;
@@ -90,6 +146,8 @@ public class ChainUpgradeData
     public int CurrentLevel => currentLevel;
     public int MaxLevel => successChances.Count + 1;
     public float CurrentSuccessChance => CanUpgrade ? successChances[currentLevel - 1] : 1f;
+    public int UpgradeGemCost => upgradeGemCost;
+    public int LuckGemCost => luckGemCost;
 
     public ChainUpgradeData(string upgradeName)
     {
@@ -99,6 +157,8 @@ public class ChainUpgradeData
     public void Validate()
     {
         currentLevel = Mathf.Max(1, currentLevel);
+        upgradeGemCost = Mathf.Max(0, upgradeGemCost);
+        luckGemCost = Mathf.Max(0, luckGemCost);
 
         for (int i = 0; i < successChances.Count; i++)
         {

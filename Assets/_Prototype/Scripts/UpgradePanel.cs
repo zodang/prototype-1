@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(ChainUpgradeSystem))]
 public class UpgradePanel : MonoBehaviour
 {
     [SerializeField] private ChainUpgradeSystem chainUpgradeSystem;
@@ -15,11 +14,15 @@ public class UpgradePanel : MonoBehaviour
     [SerializeField] private TMP_Text branchCurrentText;
     [SerializeField] private TMP_Text branchMaxText;
     [SerializeField] private TMP_Text branchPercentText;
+    [SerializeField] private TMP_Text branchUpgradeGemText;
+    [SerializeField] private TMP_Text branchLuckyGemText;
 
     [Header("Node UI")]
     [SerializeField] private TMP_Text nodeCurrentText;
     [SerializeField] private TMP_Text nodeMaxText;
     [SerializeField] private TMP_Text nodePercentText;
+    [SerializeField] private TMP_Text nodeUpgradeGemText;
+    [SerializeField] private TMP_Text nodeLuckyGemText;
 
     private void Awake()
     {
@@ -165,6 +168,9 @@ public class UpgradePanel : MonoBehaviour
             chainUpgradeSystem.BranchMaxLevel,
             chainUpgradeSystem.BranchCurrentSuccessChance);
 
+        UpdateGemCostText(branchUpgradeGemText, chainUpgradeSystem.BranchUpgradeGemCost);
+        UpdateGemCostText(branchLuckyGemText, chainUpgradeSystem.BranchLuckGemCost);
+
         UpdateUpgradeTexts(
             nodeCurrentText,
             nodeMaxText,
@@ -172,6 +178,9 @@ public class UpgradePanel : MonoBehaviour
             chainUpgradeSystem.NodeCurrentLevel,
             chainUpgradeSystem.NodeMaxLevel,
             chainUpgradeSystem.NodeCurrentSuccessChance);
+
+        UpdateGemCostText(nodeUpgradeGemText, chainUpgradeSystem.NodeUpgradeGemCost);
+        UpdateGemCostText(nodeLuckyGemText, chainUpgradeSystem.NodeLuckGemCost);
     }
 
     private void UpdateUpgradeTexts(TMP_Text currentText, TMP_Text maxText, TMP_Text percentText, int currentLevel, int maxLevel, float successChance)
@@ -189,6 +198,14 @@ public class UpgradePanel : MonoBehaviour
         if (percentText != null)
         {
             percentText.text = successChance.ToString("P0");
+        }
+    }
+
+    private void UpdateGemCostText(TMP_Text gemText, int gemCost)
+    {
+        if (gemText != null)
+        {
+            gemText.text = gemCost.ToString();
         }
     }
 }
