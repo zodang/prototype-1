@@ -346,6 +346,7 @@ GameObject:
   - component: {fileID: 251720922}
   - component: {fileID: 251720924}
   - component: {fileID: 251720923}
+  - component: {fileID: 251720925}
   m_Layer: 5
   m_Name: GemCountText
   m_TagString: Untagged
@@ -472,6 +473,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 251720921}
   m_CullTransparentMesh: 1
+--- !u!114 &251720925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251720921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0bdb54494bf400489f3bcdee65859ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemType: 3
+  coinManager: {fileID: 0}
+  gemManager: {fileID: 0}
+  countText: {fileID: 251720923}
 --- !u!1 &449959558
 GameObject:
   m_ObjectHideFlags: 0
@@ -662,6 +679,7 @@ GameObject:
   m_Component:
   - component: {fileID: 609851481}
   - component: {fileID: 609851480}
+  - component: {fileID: 609851482}
   m_Layer: 0
   m_Name: SceneController
   m_TagString: Untagged
@@ -681,7 +699,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0fb192fda4c4146a13f52b6fdaa696b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: PlayScene
+  lobbySceneName: LobbyScene
+  playSceneName: PlayScene
+  resultSceneName: ResultScene
+  resultTransitionDelay: 2
+--- !u!114 &609851482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609851479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81f2eb0a5b594ab8bb015731952f768d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playSceneName: PlayScene
+  resultSceneName: ResultScene
+  lobbySceneName: LobbyScene
 --- !u!4 &609851481
 Transform:
   m_ObjectHideFlags: 0
@@ -970,6 +1006,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startButton: {fileID: 1277507329}
   sceneLoader: {fileID: 609851480}
+  targetScene: 0
 --- !u!1 &1972373624
 GameObject:
   m_ObjectHideFlags: 0

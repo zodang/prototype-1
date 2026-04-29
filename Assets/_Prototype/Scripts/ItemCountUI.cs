@@ -7,7 +7,9 @@ public class ItemCountUI : MonoBehaviour
     private enum ItemType
     {
         Coin,
-        Gem
+        Gem,
+        CurrentRunGem,
+        TotalGem
     }
 
     [SerializeField] private ItemType itemType = ItemType.Coin;
@@ -39,6 +41,24 @@ public class ItemCountUI : MonoBehaviour
             return;
         }
 
+        if (itemType == ItemType.CurrentRunGem)
+        {
+            if (SceneDataStore.Instance == null) return;
+
+            SceneDataStore.Instance.OnCurrentRunGemCountChanged += UpdateCount;
+            UpdateCount(SceneDataStore.Instance.CurrentRunGemCount);
+            return;
+        }
+
+        if (itemType == ItemType.TotalGem)
+        {
+            if (SceneDataStore.Instance == null) return;
+
+            SceneDataStore.Instance.OnTotalGemCountChanged += UpdateCount;
+            UpdateCount(SceneDataStore.Instance.TotalGemCount);
+            return;
+        }
+
         if (gemManager == null) return;
 
         gemManager.OnGemCountChanged += UpdateCount;
@@ -55,6 +75,12 @@ public class ItemCountUI : MonoBehaviour
         if (gemManager != null)
         {
             gemManager.OnGemCountChanged -= UpdateCount;
+        }
+
+        if (SceneDataStore.Instance != null)
+        {
+            SceneDataStore.Instance.OnCurrentRunGemCountChanged -= UpdateCount;
+            SceneDataStore.Instance.OnTotalGemCountChanged -= UpdateCount;
         }
     }
 

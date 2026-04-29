@@ -32,11 +32,12 @@ public class InputManager : MonoBehaviour
     {
         _inputActions = new PlayerActionsAsset();
         _playerActions = _inputActions.Player;
-        _playerActions.Enable();
     }
 
     private void OnEnable()
     {
+        _playerActions.Enable();
+
         _playerActions.Move.started += OnMoveStarted;
         _playerActions.Move.performed += OnMovePerformed;
         _playerActions.Move.canceled += OnMoveCanceled;
@@ -68,6 +69,13 @@ public class InputManager : MonoBehaviour
         _playerActions.ChainAttack.started -= OnChainAttackStarted;
         _playerActions.ChainAttack.performed -= OnChainAttackPerformed;
         _playerActions.ChainAttack.canceled -= OnChainAttackEnded;
+
+        _playerActions.Disable();
+    }
+
+    private void OnDestroy()
+    {
+        _inputActions?.Dispose();
     }
     
     private void OnMoveStarted(InputAction.CallbackContext context)
