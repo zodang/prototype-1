@@ -51,6 +51,8 @@ public class PlayerAttack : MonoBehaviour
         chainAttackReloadSeconds = Mathf.Max(0f, chainAttackReloadSeconds);
         chainAttackEmptyDisplaySeconds = Mathf.Max(0f, chainAttackEmptyDisplaySeconds);
         chainAttackHoldSeconds = Mathf.Max(0f, chainAttackHoldSeconds);
+        maxChainCount = Mathf.Max(1, maxChainCount);
+        maxChainBranchCount = Mathf.Max(1, maxChainBranchCount);
     }
 
     private void Start()
@@ -60,6 +62,16 @@ public class PlayerAttack : MonoBehaviour
         _lineRenderer.positionCount = 0;
         _currentChainAttackAmount = Mathf.Max(0f, maxChainAttackAmount);
         NotifyChainAttackAmountChanged();
+    }
+
+    public void IncreaseMaxChainBranchCount()
+    {
+        maxChainBranchCount++;
+    }
+
+    public void IncreaseMaxChainCount()
+    {
+        maxChainCount++;
     }
 
     private void Update()
