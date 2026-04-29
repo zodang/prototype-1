@@ -30,21 +30,26 @@ public class ItemCountUI : MonoBehaviour
 
     private void OnEnable()
     {
-        FindMissingManager();
+        SubscribeAndUpdate();
+    }
 
-        if (itemType == ItemType.Coin)
+    private void Start()
+    {
+        if (itemType == ItemType.CurrentRunGem || itemType == ItemType.TotalGem)
         {
-            if (coinManager == null) return;
-
-            coinManager.OnCoinCountChanged += UpdateCount;
-            UpdateCount(coinManager.CoinCount);
-            return;
+            SubscribeAndUpdate();
         }
+    }
+
+    private void SubscribeAndUpdate()
+    {
+        FindMissingManager();
 
         if (itemType == ItemType.CurrentRunGem)
         {
             if (SceneDataStore.Instance == null) return;
 
+            SceneDataStore.Instance.OnCurrentRunGemCountChanged -= UpdateCount;
             SceneDataStore.Instance.OnCurrentRunGemCountChanged += UpdateCount;
             UpdateCount(SceneDataStore.Instance.CurrentRunGemCount);
             return;
@@ -54,13 +59,25 @@ public class ItemCountUI : MonoBehaviour
         {
             if (SceneDataStore.Instance == null) return;
 
+            SceneDataStore.Instance.OnTotalGemCountChanged -= UpdateCount;
             SceneDataStore.Instance.OnTotalGemCountChanged += UpdateCount;
             UpdateCount(SceneDataStore.Instance.TotalGemCount);
             return;
         }
 
+        if (itemType == ItemType.Coin)
+        {
+            if (coinManager == null) return;
+
+            coinManager.OnCoinCountChanged -= UpdateCount;
+            coinManager.OnCoinCountChanged += UpdateCount;
+            UpdateCount(coinManager.CoinCount);
+            return;
+        }
+
         if (gemManager == null) return;
 
+        gemManager.OnGemCountChanged -= UpdateCount;
         gemManager.OnGemCountChanged += UpdateCount;
         UpdateCount(gemManager.GemCount);
     }

@@ -4,9 +4,12 @@ using UnityEngine.SceneManagement;
 
 public class SceneDataStore : MonoBehaviour
 {
+    private const string DefaultGemSaveDataResourcePath = "GemSaveData";
+
     [SerializeField] private string playSceneName = "PlayScene";
     [SerializeField] private string resultSceneName = "ResultScene";
     [SerializeField] private string lobbySceneName = "LobbyScene";
+    [SerializeField] private GemSaveData gemSaveData;
 
     private static SceneDataStore instance;
     private GemManager currentGemManager;
@@ -30,6 +33,8 @@ public class SceneDataStore : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+        LoadSaveDataIfNeeded();
+        TotalGemCount = gemSaveData != null ? gemSaveData.LoadTotalGemCount() : 0;
     }
 
     private void OnEnable()
@@ -114,6 +119,17 @@ public class SceneDataStore : MonoBehaviour
 
         TotalGemCount += CurrentRunGemCount;
         hasCommittedCurrentRun = true;
+        gemSaveData?.SaveTotalGemCount(TotalGemCount);
         OnTotalGemCountChanged?.Invoke(TotalGemCount);
+    }
+
+    private void LoadSaveDataIfNeeded()
+    {
+        if (gemSaveData != null)
+        {
+            return;
+        }
+
+        gemSaveData = Resources.Load<GemSaveData>(DefaultGemSaveDataResourcePath);
     }
 }
