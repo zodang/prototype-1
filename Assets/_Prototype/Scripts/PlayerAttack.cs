@@ -33,7 +33,7 @@ public class PlayerAttack : MonoBehaviour
     private readonly List<Enemy> _previousChain = new List<Enemy>();
     private readonly List<List<Enemy>> _chainBranches = new List<List<Enemy>>();
     private readonly List<LineRenderer> _branchLineRenderers = new List<LineRenderer>();
-    public float _currentChainAttackAmount;
+    private float _currentChainAttackAmount;
     private float _chainAttackDecreaseTimer;
     private float _chainAttackHoldTimer;
 

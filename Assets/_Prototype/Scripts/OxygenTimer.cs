@@ -1,17 +1,12 @@
 using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class OxygenTimer : MonoBehaviour
 {
     [SerializeField] private float duration = 30f;
     [SerializeField] private bool startOnPlay = true;
-    public event Action onOxygenEnded;
-
-    private const float TickInterval = 1f;
 
     private float remainingTime;
-    private float tickTimer;
     private bool hasEnded;
 
     public event Action OnOxygenEnded;
@@ -42,19 +37,18 @@ public class OxygenTimer : MonoBehaviour
             return;
         }
 
-        tickTimer += Time.deltaTime;
+        remainingTime = Mathf.Max(0f, remainingTime - Time.deltaTime);
+        OnOxygenChanged?.Invoke(remainingTime, duration);
 
-        while (tickTimer >= TickInterval && IsRunning)
+        if (remainingTime <= 0f)
         {
-            tickTimer -= TickInterval;
-            DecreaseOxygen();
+            EndTimer();
         }
     }
 
     public void StartTimer()
     {
         remainingTime = Mathf.Max(0f, duration);
-        tickTimer = 0f;
         hasEnded = false;
         IsRunning = true;
         OnOxygenChanged?.Invoke(remainingTime, duration);
@@ -68,26 +62,13 @@ public class OxygenTimer : MonoBehaviour
     public void StopTimer()
     {
         IsRunning = false;
-        tickTimer = 0f;
     }
 
     public void SetDuration(float seconds)
     {
         duration = Mathf.Max(0f, seconds);
         remainingTime = Mathf.Min(remainingTime, duration);
-        tickTimer = 0f;
         OnOxygenChanged?.Invoke(remainingTime, duration);
-    }
-
-    private void DecreaseOxygen()
-    {
-        remainingTime = Mathf.Max(0f, remainingTime - 1f);
-        OnOxygenChanged?.Invoke(remainingTime, duration);
-
-        if (remainingTime <= 0f)
-        {
-            EndTimer();
-        }
     }
 
     private void EndTimer()
@@ -102,6 +83,6 @@ public class OxygenTimer : MonoBehaviour
         IsRunning = false;
 
         OnOxygenEnded?.Invoke();
-        onOxygenEnded?.Invoke();
+        OnOxygenEnded?.Invoke();
     }
 }
