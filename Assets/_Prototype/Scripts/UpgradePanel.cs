@@ -1,22 +1,33 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(ChainUpgradeSystem))]
 public class UpgradePanel : MonoBehaviour
 {
-    [SerializeField] private PlayerAttack playerAttack;
+    [SerializeField] private ChainUpgradeSystem chainUpgradeSystem;
     [SerializeField] private Button branchUpgradeBtn;
     [SerializeField] private Button nodeUpgradeBtn;
 
     private void Awake()
     {
-        if (playerAttack == null)
+        if (chainUpgradeSystem == null)
         {
-            playerAttack = FindFirstObjectByType<PlayerAttack>();
+            chainUpgradeSystem = GetComponent<ChainUpgradeSystem>();
+        }
+
+        if (chainUpgradeSystem == null)
+        {
+            chainUpgradeSystem = FindFirstObjectByType<ChainUpgradeSystem>();
         }
     }
 
     private void OnEnable()
     {
+        if (chainUpgradeSystem != null)
+        {
+            chainUpgradeSystem.OnUpgradeStateChanged += UpdateButtons;
+        }
+
         if (branchUpgradeBtn != null)
         {
             branchUpgradeBtn.onClick.AddListener(UpgradeChainBranch);
@@ -26,10 +37,17 @@ public class UpgradePanel : MonoBehaviour
         {
             nodeUpgradeBtn.onClick.AddListener(UpgradeChainNode);
         }
+
+        UpdateButtons();
     }
 
     private void OnDisable()
     {
+        if (chainUpgradeSystem != null)
+        {
+            chainUpgradeSystem.OnUpgradeStateChanged -= UpdateButtons;
+        }
+
         if (branchUpgradeBtn != null)
         {
             branchUpgradeBtn.onClick.RemoveListener(UpgradeChainBranch);
@@ -43,15 +61,30 @@ public class UpgradePanel : MonoBehaviour
 
     private void UpgradeChainBranch()
     {
-        if (playerAttack == null) return;
+        if (chainUpgradeSystem == null) return;
 
-        playerAttack.IncreaseMaxChainBranchCount();
+        chainUpgradeSystem.TryUpgradeBranch();
+        UpdateButtons();
     }
 
     private void UpgradeChainNode()
     {
-        if (playerAttack == null) return;
+        if (chainUpgradeSystem == null) return;
 
-        playerAttack.IncreaseMaxChainCount();
+        chainUpgradeSystem.TryUpgradeNode();
+        UpdateButtons();
+    }
+
+    private void UpdateButtons()
+    {
+        if (branchUpgradeBtn != null)
+        {
+            branchUpgradeBtn.interactable = chainUpgradeSystem != null && chainUpgradeSystem.CanUpgradeBranch;
+        }
+
+        if (nodeUpgradeBtn != null)
+        {
+            nodeUpgradeBtn.interactable = chainUpgradeSystem != null && chainUpgradeSystem.CanUpgradeNode;
+        }
     }
 }
