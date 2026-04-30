@@ -18,9 +18,13 @@ public class SceneDataStore : MonoBehaviour
 
     public static SceneDataStore Instance => instance;
     public int CurrentRunGemCount { get; private set; }
+    public int CurrentRunEnemyCount { get; private set; }
+    public float CurrentRunElapsedSeconds { get; private set; }
     public int TotalGemCount { get; private set; }
 
     public event Action<int> OnCurrentRunGemCountChanged;
+    public event Action<int> OnCurrentRunEnemyCountChanged;
+    public event Action<float> OnCurrentRunElapsedSecondsChanged;
     public event Action<int> OnTotalGemCountChanged;
 
     private void Awake()
@@ -47,9 +51,21 @@ public class SceneDataStore : MonoBehaviour
         HandleSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single);
     }
 
+    private void Update()
+    {
+        if (!hasActiveRun || hasCommittedCurrentRun)
+        {
+            return;
+        }
+
+        CurrentRunElapsedSeconds += Time.deltaTime;
+        OnCurrentRunElapsedSecondsChanged?.Invoke(CurrentRunElapsedSeconds);
+    }
+
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= HandleSceneLoaded;
+        Enemy.OnAnyDeath -= HandleEnemyDeath;
         UnbindGemManager();
     }
 
@@ -60,9 +76,13 @@ public class SceneDataStore : MonoBehaviour
         if (scene.name == playSceneName)
         {
             BeginRun();
+            Enemy.OnAnyDeath -= HandleEnemyDeath;
+            Enemy.OnAnyDeath += HandleEnemyDeath;
             BindGemManager();
             return;
         }
+
+        Enemy.OnAnyDeath -= HandleEnemyDeath;
 
         if (scene.name == resultSceneName || scene.name == lobbySceneName)
         {
@@ -70,6 +90,8 @@ public class SceneDataStore : MonoBehaviour
         }
 
         OnCurrentRunGemCountChanged?.Invoke(CurrentRunGemCount);
+        OnCurrentRunEnemyCountChanged?.Invoke(CurrentRunEnemyCount);
+        OnCurrentRunElapsedSecondsChanged?.Invoke(CurrentRunElapsedSeconds);
         OnTotalGemCountChanged?.Invoke(TotalGemCount);
     }
 
@@ -78,7 +100,11 @@ public class SceneDataStore : MonoBehaviour
         hasActiveRun = true;
         hasCommittedCurrentRun = false;
         CurrentRunGemCount = 0;
+        CurrentRunEnemyCount = 0;
+        CurrentRunElapsedSeconds = 0f;
         OnCurrentRunGemCountChanged?.Invoke(CurrentRunGemCount);
+        OnCurrentRunEnemyCountChanged?.Invoke(CurrentRunEnemyCount);
+        OnCurrentRunElapsedSecondsChanged?.Invoke(CurrentRunElapsedSeconds);
     }
 
     private void BindGemManager()
@@ -108,6 +134,17 @@ public class SceneDataStore : MonoBehaviour
     {
         CurrentRunGemCount = Mathf.Max(0, gemCount);
         OnCurrentRunGemCountChanged?.Invoke(CurrentRunGemCount);
+    }
+
+    private void HandleEnemyDeath(Enemy enemy)
+    {
+        if (!hasActiveRun || hasCommittedCurrentRun)
+        {
+            return;
+        }
+
+        CurrentRunEnemyCount++;
+        OnCurrentRunEnemyCountChanged?.Invoke(CurrentRunEnemyCount);
     }
 
     private void CommitCurrentRun()

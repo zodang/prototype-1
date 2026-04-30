@@ -24,6 +24,7 @@ public class Enemy : MonoBehaviour
     
     private Coroutine _coroutine;
     
+    public static event Action<Enemy> OnAnyDeath;
     public Action<Enemy> OnDeath;
 
     private Vector3 _originalScale;
@@ -103,7 +104,7 @@ public class Enemy : MonoBehaviour
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
         }
 
-        OnDeath?.Invoke(this);
+        NotifyDeath();
         Destroy(gameObject);
     }
 
@@ -158,8 +159,13 @@ public class Enemy : MonoBehaviour
         Instantiate(explosionEffect, transform.position, Quaternion.identity);
         dropManager.Drop(transform.position);
         
-        OnDeath?.Invoke(this);
+        NotifyDeath();
         Destroy(gameObject);
     }
 
+    private void NotifyDeath()
+    {
+        OnDeath?.Invoke(this);
+        OnAnyDeath?.Invoke(this);
+    }
 }

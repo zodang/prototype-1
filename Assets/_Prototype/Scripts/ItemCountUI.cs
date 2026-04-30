@@ -9,7 +9,8 @@ public class ItemCountUI : MonoBehaviour
         Coin,
         Gem,
         CurrentRunGem,
-        TotalGem
+        TotalGem,
+        CurrentRunEnemy
     }
 
     [SerializeField] private ItemType itemType = ItemType.Coin;
@@ -35,7 +36,7 @@ public class ItemCountUI : MonoBehaviour
 
     private void Start()
     {
-        if (itemType == ItemType.CurrentRunGem || itemType == ItemType.TotalGem)
+        if (itemType == ItemType.CurrentRunGem || itemType == ItemType.TotalGem || itemType == ItemType.CurrentRunEnemy)
         {
             SubscribeAndUpdate();
         }
@@ -62,6 +63,16 @@ public class ItemCountUI : MonoBehaviour
             SceneDataStore.Instance.OnTotalGemCountChanged -= UpdateCount;
             SceneDataStore.Instance.OnTotalGemCountChanged += UpdateCount;
             UpdateCount(SceneDataStore.Instance.TotalGemCount);
+            return;
+        }
+
+        if (itemType == ItemType.CurrentRunEnemy)
+        {
+            if (SceneDataStore.Instance == null) return;
+
+            SceneDataStore.Instance.OnCurrentRunEnemyCountChanged -= UpdateCount;
+            SceneDataStore.Instance.OnCurrentRunEnemyCountChanged += UpdateCount;
+            UpdateCount(SceneDataStore.Instance.CurrentRunEnemyCount);
             return;
         }
 
@@ -97,6 +108,7 @@ public class ItemCountUI : MonoBehaviour
         if (SceneDataStore.Instance != null)
         {
             SceneDataStore.Instance.OnCurrentRunGemCountChanged -= UpdateCount;
+            SceneDataStore.Instance.OnCurrentRunEnemyCountChanged -= UpdateCount;
             SceneDataStore.Instance.OnTotalGemCountChanged -= UpdateCount;
         }
     }
