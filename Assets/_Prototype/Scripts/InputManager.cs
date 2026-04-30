@@ -28,6 +28,11 @@ public class InputManager : MonoBehaviour
     public bool IsTryingToBasicAttack { get; private set; }
     public bool IsTryingToChainAttack { get; private set; }
 
+    private Vector2 _keyboardMoveInput;
+    private Vector2 _uiMoveInput;
+    private bool _isKeyboardChainAttackPressed;
+    private bool _isUiChainAttackPressed;
+
     private void Awake()
     {
         _inputActions = new PlayerActionsAsset();
@@ -80,22 +85,20 @@ public class InputManager : MonoBehaviour
     
     private void OnMoveStarted(InputAction.CallbackContext context)
     {
-        MoveInput = context.ReadValue<Vector2>();
-        IsTryingToMove = true;
-        OnMoveStartEvent?.Invoke();
+        _keyboardMoveInput = context.ReadValue<Vector2>();
+        UpdateMoveState();
     }
 
     private void OnMovePerformed(InputAction.CallbackContext context)
     {
-        MoveInput = context.ReadValue<Vector2>();
-        OnMoveEvent?.Invoke(MoveInput);
+        _keyboardMoveInput = context.ReadValue<Vector2>();
+        UpdateMoveState();
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
-        MoveInput = Vector2.zero;
-        IsTryingToMove = false;
-        OnMoveEndEvent?.Invoke();
+        _keyboardMoveInput = Vector2.zero;
+        UpdateMoveState();
     }
 
     private void OnLookPerformed(InputAction.CallbackContext context)
@@ -123,8 +126,8 @@ public class InputManager : MonoBehaviour
     
     private void OnChainAttackStarted(InputAction.CallbackContext context)
     {
-        IsTryingToChainAttack = true;
-        OnChainAttackStartedEvent?.Invoke();
+        _isKeyboardChainAttackPressed = true;
+        UpdateChainAttackState();
     }
 
     private void OnChainAttackPerformed(InputAction.CallbackContext context)
@@ -134,7 +137,76 @@ public class InputManager : MonoBehaviour
     
     private void OnChainAttackEnded(InputAction.CallbackContext context)
     {
-        IsTryingToChainAttack = false;
-        OnChainAttackEndedEvent?.Invoke();
+        _isKeyboardChainAttackPressed = false;
+        UpdateChainAttackState();
+    }
+
+    public void BeginUiChainAttack()
+    {
+        _isUiChainAttackPressed = true;
+        UpdateChainAttackState();
+        OnChainAttackPerformedEvent?.Invoke();
+    }
+
+    public void EndUiChainAttack()
+    {
+        _isUiChainAttackPressed = false;
+        UpdateChainAttackState();
+    }
+
+    public void SetUiMoveInput(Vector2 moveInput)
+    {
+        _uiMoveInput = Vector2.ClampMagnitude(moveInput, 1f);
+        UpdateMoveState();
+    }
+
+    public void ClearUiMoveInput()
+    {
+        _uiMoveInput = Vector2.zero;
+        UpdateMoveState();
+    }
+
+    private void UpdateMoveState()
+    {
+        Vector2 previousMoveInput = MoveInput;
+        bool wasTryingToMove = IsTryingToMove;
+
+        MoveInput = Vector2.ClampMagnitude(_keyboardMoveInput + _uiMoveInput, 1f);
+        IsTryingToMove = MoveInput.sqrMagnitude > 0.0001f;
+
+        if (!wasTryingToMove && IsTryingToMove)
+        {
+            OnMoveStartEvent?.Invoke();
+        }
+
+        if (IsTryingToMove && previousMoveInput != MoveInput)
+        {
+            OnMoveEvent?.Invoke(MoveInput);
+        }
+
+        if (wasTryingToMove && !IsTryingToMove)
+        {
+            OnMoveEndEvent?.Invoke();
+        }
+    }
+
+    private void UpdateChainAttackState()
+    {
+        bool isTryingToChainAttack = _isKeyboardChainAttackPressed || _isUiChainAttackPressed;
+        if (IsTryingToChainAttack == isTryingToChainAttack)
+        {
+            return;
+        }
+
+        IsTryingToChainAttack = isTryingToChainAttack;
+
+        if (IsTryingToChainAttack)
+        {
+            OnChainAttackStartedEvent?.Invoke();
+        }
+        else
+        {
+            OnChainAttackEndedEvent?.Invoke();
+        }
     }
 }
