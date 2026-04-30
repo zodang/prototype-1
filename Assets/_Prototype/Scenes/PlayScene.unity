@@ -2086,7 +2086,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropManager
   droppedCoinPrefab: {fileID: -7322692313472514704, guid: be64c65740a09434e9d48f154a3b249b, type: 3}
-  minDropCount: 0
+  minDropCount: 1
   maxDropCount: 6
   droppedGemPrefab: {fileID: 5155913636297225022, guid: ca85fc09454e74e498281f0317373dbd, type: 3}
   minGemDropCount: 0
