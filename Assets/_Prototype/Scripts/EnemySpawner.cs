@@ -7,6 +7,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private float spawnInterval = 3f;
     [SerializeField] private int spawnCount = 5;
+    [SerializeField] private bool increaseSpawnCountOverTime = true;
+    [SerializeField] private int spawnCountIncreaseAmount = 1;
+    [SerializeField] private int maxSpawnCount = 30;
     [SerializeField] private float spawnRadius = 6f;
     [SerializeField] private bool spawnOnStart = true;
 
@@ -16,6 +19,8 @@ public class EnemySpawner : MonoBehaviour
     {
         spawnInterval = Mathf.Max(0.01f, spawnInterval);
         spawnCount = Mathf.Max(1, spawnCount);
+        spawnCountIncreaseAmount = Mathf.Max(1, spawnCountIncreaseAmount);
+        maxSpawnCount = Mathf.Max(spawnCount, maxSpawnCount);
         spawnRadius = Mathf.Max(0f, spawnRadius);
     }
 
@@ -54,7 +59,16 @@ public class EnemySpawner : MonoBehaviour
         {
             yield return wait;
             SpawnEnemiesAroundPlayer();
+            IncreaseSpawnCount();
         }
+    }
+
+    private void IncreaseSpawnCount()
+    {
+        if (!increaseSpawnCountOverTime) return;
+        if (spawnCount >= maxSpawnCount) return;
+
+        spawnCount = Mathf.Min(spawnCount + spawnCountIncreaseAmount, maxSpawnCount);
     }
 
     private void SpawnEnemiesAroundPlayer()

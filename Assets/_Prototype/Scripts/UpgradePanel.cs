@@ -24,6 +24,7 @@ public class UpgradePanel : MonoBehaviour
     [SerializeField] private TMP_Text branchCurrentText;
     [SerializeField] private TMP_Text branchMaxText;
     [SerializeField] private TMP_Text branchPercentText;
+    [SerializeField] private TMP_Text branchUpgradePercentText;
     [FormerlySerializedAs("branchUpgradeGemText")]
     [SerializeField] private TMP_Text branchUpgradeCoinText;
     [FormerlySerializedAs("branchLuckyGemText")]
@@ -33,6 +34,7 @@ public class UpgradePanel : MonoBehaviour
     [SerializeField] private TMP_Text nodeCurrentText;
     [SerializeField] private TMP_Text nodeMaxText;
     [SerializeField] private TMP_Text nodePercentText;
+    [SerializeField] private TMP_Text nodeUpgradePercentText;
     [FormerlySerializedAs("nodeUpgradeGemText")]
     [SerializeField] private TMP_Text nodeUpgradeCoinText;
     [FormerlySerializedAs("nodeLuckyGemText")]
@@ -222,6 +224,7 @@ public class UpgradePanel : MonoBehaviour
             branchCurrentText,
             branchMaxText,
             branchPercentText,
+            branchUpgradePercentText,
             chainUpgradeSystem.BranchCurrentLevel,
             chainUpgradeSystem.BranchMaxLevel,
             chainUpgradeSystem.BranchCurrentSuccessChance);
@@ -233,6 +236,7 @@ public class UpgradePanel : MonoBehaviour
             nodeCurrentText,
             nodeMaxText,
             nodePercentText,
+            nodeUpgradePercentText,
             chainUpgradeSystem.NodeCurrentLevel,
             chainUpgradeSystem.NodeMaxLevel,
             chainUpgradeSystem.NodeCurrentSuccessChance);
@@ -241,7 +245,7 @@ public class UpgradePanel : MonoBehaviour
         UpdateCoinCostText(nodeLuckyCoinText, chainUpgradeSystem.NodeLuckCoinCost);
     }
 
-    private void UpdateUpgradeTexts(TMP_Text currentText, TMP_Text maxText, TMP_Text percentText, int currentLevel, int maxLevel, float successChance)
+    private void UpdateUpgradeTexts(TMP_Text currentText, TMP_Text maxText, TMP_Text percentText, TMP_Text upgradePercentText, int currentLevel, int maxLevel, float successChance)
     {
         if (currentText != null)
         {
@@ -255,8 +259,18 @@ public class UpgradePanel : MonoBehaviour
 
         if (percentText != null)
         {
-            percentText.text = successChance.ToString("P0");
+            UpdatePercentText(percentText, successChance);
         }
+
+        if (upgradePercentText != null)
+        {
+            UpdatePercentText(upgradePercentText, successChance);
+        }
+    }
+
+    private void UpdatePercentText(TMP_Text percentText, float successChance)
+    {
+        percentText.text = successChance.ToString("P0");
     }
 
     private void UpdateCoinCostText(TMP_Text coinText, int coinCost)
