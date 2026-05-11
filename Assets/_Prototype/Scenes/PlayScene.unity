@@ -5079,18 +5079,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   inputManager: {fileID: 240833237}
   cameraEffect: {fileID: 1406903561}
-  attackRadius: 2
+  attackRadius: 3
   attackDamage: 1
   attackInterval: 0.25
-  chainAttackEmptyDisplaySeconds: 0.15
+  maxChainCount: 1
+  maxChainBranchCount: 1
+  detectionBufferSize: 16
   chainAttackHoldSeconds: 0.15
   maxChainAttackAmount: 15
   chainAttackDecreasePerSecond: 2
   chainAttackReloadSeconds: 2
-  maxChainCount: 1
-  maxChainBranchCount: 1
-  chain:
-  - {fileID: 0}
+  chainAttackEmptyDisplaySeconds: 0.15
 --- !u!120 &1398753575
 LineRenderer:
   serializedVersion: 3
